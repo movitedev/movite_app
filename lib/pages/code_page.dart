@@ -1,12 +1,13 @@
 import 'dart:convert';
+
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/models/Run.dart';
 import 'package:movite_app/models/User.dart';
-import 'package:http/http.dart' as http;
 import 'package:qr_flutter/qr_flutter.dart';
 
 class CodePage extends StatefulWidget {
@@ -25,11 +26,8 @@ class _CodePageState extends State<CodePage> {
 
   void createCode() async {
     if (counter == 0) {
-      await DotEnv().load('.env');
-
       var jwt = await MyPreferences.getAuthCode();
-      var res =
-          await http.post("${DotEnv().env['SERVER_IP']}/users/code", headers: {
+      var res = await http.post("${environment['url']}/users/code", headers: {
         'Authorization': jwt,
       });
       if (res.statusCode == 200) {
@@ -51,17 +49,13 @@ class _CodePageState extends State<CodePage> {
   Future validateCode(id, code) async {
     String value = "Cannot validate code";
 
-    await DotEnv().load('.env');
-
     var jwt = await MyPreferences.getAuthCode();
-    var res = await http.post(
-        "${DotEnv().env['SERVER_IP']}/runs/" + id + "/validate",
-        headers: {
-          'Authorization': jwt,
-        },
-        body: {
-          "code": code
-        });
+    var res = await http
+        .post("${environment['url']}/runs/" + id + "/validate", headers: {
+      'Authorization': jwt,
+    }, body: {
+      "code": code
+    });
 
     if (res.statusCode == 200) {
       User user = User.fromJson(json.decode(res.body)['passenger']);
@@ -140,11 +134,9 @@ class _CodePageState extends State<CodePage> {
   Future<List<Widget>> findRuns() async {
     List<Widget> widgets = new List();
 
-    await DotEnv().load('.env');
-
     var jwt = await MyPreferences.getAuthCode();
-    var res = await http
-        .get("${DotEnv().env['SERVER_IP']}/users/me/runs/given", headers: {
+    var res =
+        await http.get("${environment['url']}/users/me/runs/given", headers: {
       'Authorization': jwt,
     });
 
@@ -193,7 +185,8 @@ class _CodePageState extends State<CodePage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                title: const Text('Select a Run to validate'), children: runs);
+                title: const Text('Select a Run to validate'),
+                children: runs);
           });
     } else {
       _scaffoldKey.currentState.showSnackBar(new SnackBar(

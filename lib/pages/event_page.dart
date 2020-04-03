@@ -10,7 +10,6 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
-
     final text = Text(
       'Event,',
       textAlign: TextAlign.center,
@@ -19,7 +18,6 @@ class _EventPageState extends State<EventPage> {
         fontSize: 13.0,
       ),
     );
-
 
     return new Scaffold(
       backgroundColor: Colors.white,

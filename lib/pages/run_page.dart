@@ -10,7 +10,6 @@ class RunPage extends StatefulWidget {
 class _RunPageState extends State<RunPage> {
   @override
   Widget build(BuildContext context) {
-
     final text = Text(
       'Run,',
       textAlign: TextAlign.center,
@@ -20,12 +19,11 @@ class _RunPageState extends State<RunPage> {
       ),
     );
 
-
     return new Scaffold(
-        backgroundColor: Colors.white,
-        body: Container(
-          child: text,
-          ),
-        );
+      backgroundColor: Colors.white,
+      body: Container(
+        child: text,
+      ),
+    );
   }
 }

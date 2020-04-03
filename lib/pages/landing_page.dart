@@ -1,20 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/models/User.dart';
 import 'package:movite_app/pages/home_page.dart';
 import 'package:movite_app/pages/login_page.dart';
 
 class LandingPage extends StatelessWidget {
-
   Future<bool> checkIfAuthenticated() async {
-    await DotEnv().load('.env');
-
     var jwt = await MyPreferences.getAuthCode();
-    var res = await http.get("${DotEnv().env['SERVER_IP']}/users/me", headers: {
+    var res = await http.get("${environment['url']}/users/me", headers: {
       'Authorization': jwt,
     });
     if (res.statusCode == 200) {
@@ -28,28 +25,27 @@ class LandingPage extends StatelessWidget {
     return false;
   }
 
-@override
-Widget build(BuildContext context) {
-  checkIfAuthenticated().then((success) {
-    if (success) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) =>
-            HomePage()),
-      );
-      //Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) =>
-            LoginPage()),
-      );
-      //Navigator.pushReplacementNamed(context, '/login');
-    }
-  });
+  @override
+  Widget build(BuildContext context) {
+    checkIfAuthenticated().then((success) {
+      if (success) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        //Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+        //Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
 
-  return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ));
-}}
+    return Scaffold(
+        body: Center(
+      child: CircularProgressIndicator(),
+    ));
+  }
+}

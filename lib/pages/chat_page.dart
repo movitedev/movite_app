@@ -19,7 +19,6 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
 
-
     return new Scaffold(
       backgroundColor: Colors.white,
       body: Container(

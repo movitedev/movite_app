@@ -8,10 +8,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   @override
   Widget build(BuildContext context) {
-
     final text = Text(
       'Welcome,',
       textAlign: TextAlign.center,
@@ -20,7 +18,6 @@ class _ProfilePageState extends State<ProfilePage> {
         fontSize: 13.0,
       ),
     );
-
 
     final name = Text(
       'Harshil Jasoliya',
@@ -44,13 +41,16 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Colors.lightBlueAccent,
         child: Text('Clap ', style: TextStyle(color: Colors.white)),
       ),
-    );return new Scaffold(
+    );
+    return new Scaffold(
       backgroundColor: Colors.white,
       body: Container(
         child: Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(top: 40.0,),
+              padding: EdgeInsets.only(
+                top: 40.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -64,9 +64,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         Icons.settings,
                         color: Colors.lightBlue,
                         size: 28.0,
-                      ), onPressed: (){
-
-                    },
+                      ),
+                      onPressed: () {},
                     ),
                   ),
                 ],
@@ -76,7 +75,6 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 15.0,
             ),
             Container(
-
               child: Hero(
                 tag: 'hero',
                 child: CircleAvatar(

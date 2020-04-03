@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:movite_app/commons/env.dart';
 
 import 'login_page.dart';
 
@@ -41,16 +39,16 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void showBar(String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value), behavior: SnackBarBehavior.floating,
-      elevation: 8,));
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(value),
+      behavior: SnackBarBehavior.floating,
+      elevation: 8,
+    ));
   }
 
   Future<bool> attemptSignUp(
       String email, String password, String name, String age) async {
-    await DotEnv().load('.env');
-
-    var res = await http.post("${DotEnv().env['SERVER_IP']}/users",
+    var res = await http.post("${environment['url']}/users",
         body: {"email": email, "password": password, "name": name, "age": age});
     if (res.statusCode == 201) {
       return true;
@@ -186,15 +184,15 @@ class _SignUpPageState extends State<SignUpPage> {
                 if (success) {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) =>
-                        LoginPage(),
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
                       settings: RouteSettings(
-                          arguments: {'showBar': true},
+                        arguments: {'showBar': true},
                       ),
                     ),
                   );
                   //Navigator.pushReplacementNamed(context, '/login',
-                      //arguments: {'showBar': true});
+                  //arguments: {'showBar': true});
                 }
               } else {
                 showBar(

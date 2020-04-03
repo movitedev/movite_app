@@ -25,11 +25,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> handler(value) async {
-
-    if(value==0) {
+    if (value == 0) {
       _loginAlert();
     }
-
   }
 
   final List<Widget> _children = [
@@ -58,7 +56,10 @@ class _HomePageState extends State<HomePage> {
               child: Text('Logout'),
               onPressed: () async {
                 await MyPreferences.logout();
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LandingPage()), (route) => false);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LandingPage()),
+                    (route) => false);
               },
             ),
           ],

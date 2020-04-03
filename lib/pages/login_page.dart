@@ -1,14 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/models/User.dart';
 import 'package:movite_app/models/UserAndToken.dart';
 import 'package:movite_app/pages/home_page.dart';
 import 'package:movite_app/pages/signup_page.dart';
-import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -24,9 +25,11 @@ class _LoginPageState extends State<LoginPage> {
   var _googleSignIn = GoogleSignIn();
 
   void showBar(String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value), behavior: SnackBarBehavior.floating,
-      elevation: 8,));
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(value),
+      behavior: SnackBarBehavior.floating,
+      elevation: 8,
+    ));
   }
 
   final emailController = TextEditingController();
@@ -41,9 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<User> attemptLogIn(String email, String password) async {
-    await DotEnv().load('.env');
-
-    var res = await http.post("${DotEnv().env['SERVER_IP']}/users/login",
+    var res = await http.post("${environment['url']}/users/login",
         body: {"email": email, "password": password});
     if (res.statusCode == 200) {
       UserAndToken userAndToken = UserAndToken.fromJson(json.decode(res.body));
@@ -58,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
         action: SnackBarAction(
           label: "Resend email",
           onPressed: () async {
-            await http.post("${DotEnv().env['SERVER_IP']}/users/email",
+            await http.post("${environment['url']}/users/email",
                 body: {"email": email});
           },
         ),
@@ -75,10 +76,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<User> attemptGoogleLogin(String token) async {
-    await DotEnv().load('.env');
-
-    var res = await http.post("${DotEnv().env['SERVER_IP']}/users/google",
-        body: {"token": token});
+    var res = await http
+        .post("${environment['url']}/users/google", body: {"token": token});
     if (res.statusCode == 200) {
       UserAndToken userAndToken = UserAndToken.fromJson(json.decode(res.body));
       await MyPreferences.setAuthCode(userAndToken.token);
