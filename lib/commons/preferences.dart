@@ -18,9 +18,14 @@ class MyPreferences {
     return prefs.getInt('age');
   }
 
-  static Future<String> getemail() async {
+  static Future<String> getEmail() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('email');
+  }
+
+  static Future<String> getId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('id');
   }
 
   static Future setAuthCode(String authCode) async {
@@ -44,11 +49,17 @@ class MyPreferences {
     prefs.setString('email', email);
   }
 
+  static Future setId(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('id', id);
+  }
+
   static Future saveUser(User user) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('name', user.name);
     prefs.setInt('age', user.age);
     prefs.setString('email', user.email);
+    prefs.setString('id', user.id);
   }
 
   static Future logout() async {
@@ -57,6 +68,7 @@ class MyPreferences {
     prefs.setString('name', '');
     prefs.setInt('age', 0);
     prefs.setString('email', '');
+    prefs.setString('id', '');
   }
 
 }

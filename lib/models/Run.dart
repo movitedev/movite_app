@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/models/User.dart';
 
-import 'Passenger.dart';
+import 'UsersReduced.dart';
 
 class Run {
   @JsonKey(name: '_id')
@@ -126,6 +126,8 @@ class RunDetails {
       'from': from.toJson(),
       'to': to.toJson(),
       'driver': driver.toJson(),
+      'passengers': passengers.map((tag) => tag.toJson()).toList(),
+      'validated': validated.map((tag) => tag.toJson()).toList(),
       'eventDate': eventDate,
       'createdAt': createdAt
     };
