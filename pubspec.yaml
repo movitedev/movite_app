@@ -21,7 +21,6 @@ dependencies:
     sdk: flutter
   shared_preferences:
   http:
-  flutter_dotenv:
   google_sign_in: ^4.3.0
   flutter_auth_buttons:
   qr_flutter:
@@ -54,7 +53,6 @@ flutter:
   #  - images/a_dot_ham.jpeg
 
   assets:
-    - .env
     - assets/
 
 
