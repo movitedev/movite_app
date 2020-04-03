@@ -43,34 +43,14 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
     return new Scaffold(
+      appBar: AppBar(
+        title: Text("Profile"),
+        backgroundColor: Colors.lightBlueAccent,
+      ),
       backgroundColor: Colors.white,
       body: Container(
         child: Column(
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(
-                top: 40.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(right: 15.0),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.settings,
-                        color: Colors.lightBlue,
-                        size: 28.0,
-                      ),
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
-              ),
-            ),
             SizedBox(
               height: 15.0,
             ),

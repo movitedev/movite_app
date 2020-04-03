@@ -208,6 +208,10 @@ class _SignUpPageState extends State<SignUpPage> {
     );
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Register"),
+        backgroundColor: Colors.lightBlueAccent,
+      ),
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: Center(
@@ -220,32 +224,6 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Container(
                 child: ListView(
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 30.0, left: 10.0),
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.topLeft,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.lightBlue,
-                                size: 25.0,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                          SizedBox(width: 0.0),
-                          Text(
-                            'Register',
-                            style: TextStyle(
-                                color: Colors.lightBlue, fontSize: 20.0),
-                          ),
-                        ],
-                      ),
-                    ),
                     ListView(
                       shrinkWrap: true,
                       padding:

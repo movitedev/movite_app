@@ -26,6 +26,7 @@ dependencies:
   qr_flutter:
   barcode_scan:
   json_annotation:
+  intl:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

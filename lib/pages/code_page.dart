@@ -4,6 +4,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/models/Run.dart';
@@ -150,19 +151,23 @@ class _CodePageState extends State<CodePage> {
       runs.forEach((run) {
         if ((run.eventDate.difference(now).inMinutes).abs() < 100) {
           widgets.add(SimpleDialogOption(
-            onPressed: () async {
-              Navigator.pop(context);
-              String barcode = await scanCode();
-              if (barcode != null) {
-                await validateCode(run.id, barcode);
-              }
-            },
-            child: Text((run.eventDate).toString() +
-                run.from.name +
-                " - " +
-                run.to.name),
-          ));
+              onPressed: () async {
+                Navigator.pop(context);
+                String barcode = await scanCode();
+                if (barcode != null) {
+                  await validateCode(run.id, barcode);
+                }
+              },
+              child: Column(children: <Widget>[
+                Text(run.from.name + " - " + run.to.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    )),
+                Text(DateFormat('dd-MM-yyyy – kk:mm').format(run.eventDate)),
+              ])));
         }
+        ;
       });
     }
 
