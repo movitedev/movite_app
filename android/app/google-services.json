@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "643325120680",
+    "firebase_url": "https://movite-272514.firebaseio.com",
+    "project_id": "movite-272514",
+    "storage_bucket": "movite-272514.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643325120680:android:559cb0600fe8442f17729d",
+        "android_client_info": {
+          "package_name": "com.movite.movite_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643325120680-mj5acc5mmthsm0vib9idebde3jgduu3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.movite.movite_app",
+            "certificate_hash": "b0ba9e1a91bea4bd3e66961f1692acdb9bab9f04"
+          }
+        },
+        {
+          "client_id": "643325120680-81h2eaug2j9huq2rq55q1upocvtma3nm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsCUBVW9yHpOi5nFaQ7xuSJ6_1kCXJIx0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643325120680-81h2eaug2j9huq2rq55q1upocvtma3nm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
