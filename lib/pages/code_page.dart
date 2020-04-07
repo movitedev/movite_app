@@ -21,30 +21,34 @@ class CodePage extends StatefulWidget {
 class _CodePageState extends State<CodePage> {
   int _state = 0;
   int _buttonState = 0;
-  int counter = 0;
   String code;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void createCode() async {
-    if (counter == 0) {
-      var jwt = await MyPreferences.getAuthCode();
-      var res = await http.post("${environment['url']}/users/code", headers: {
-        'Authorization': jwt,
+    var jwt = await MyPreferences.getAuthCode();
+    var res = await http.post("${environment['url']}/users/code", headers: {
+      'Authorization': jwt,
+    });
+    if (res.statusCode == 200) {
+      final responseJson = json.decode(res.body);
+      code = responseJson['validRunCode']['code'];
+      setState(() {
+        _state = 1;
       });
-      if (res.statusCode == 200) {
-        final responseJson = json.decode(res.body);
-        code = responseJson['validRunCode']['code'];
-        setState(() {
-          _state = 1;
-        });
-      } else {
-        setState(() {
-          _state = 2;
-        });
-      }
-
-      counter++;
+    } else {
+      setState(() {
+        _state = 2;
+      });
     }
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      createCode();
+    });
+
+    super.initState();
   }
 
   Future validateCode(id, code) async {
@@ -167,7 +171,6 @@ class _CodePageState extends State<CodePage> {
                 Text(DateFormat('dd-MM-yyyy – kk:mm').format(run.eventDate)),
               ])));
         }
-        ;
       });
     }
 
@@ -204,8 +207,6 @@ class _CodePageState extends State<CodePage> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => createCode());
-
     return Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.white,

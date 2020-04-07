@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'UsersReduced.dart';
 
-class Chat {
+class Chat implements Comparable<Chat>{
   @JsonKey(name: '_id')
   String id;
   List<Partecipant> partecipants;
@@ -32,5 +32,27 @@ class Chat {
       'lastUpdate': lastUpdate,
       'createdAt': createdAt
     };
+  }
+
+  @override
+  int compareTo(other) {
+
+    if (this.lastUpdate == null || other == null) {
+      return null;
+    }
+
+    if (this.lastUpdate.isBefore(other.lastUpdate)) {
+      return 1;
+    }
+
+    if (this.lastUpdate.isAfter(other.lastUpdate)) {
+      return -1;
+    }
+
+    if (this.lastUpdate == other.lastUpdate) {
+      return 0;
+    }
+
+    return null;
   }
 }
