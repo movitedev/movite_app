@@ -5,13 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/preferences.dart';
+import 'package:movite_app/commons/sockets.dart';
 import 'package:movite_app/models/Chat.dart';
 import 'package:movite_app/models/Message.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-
-IO.Socket chatSocket, messageSocket;
-
-Map<String, bool> messageSocketsMap = Map<String, bool>();
 
 class ChatPage extends StatefulWidget {
   static String tag = 'profile-page';
@@ -20,145 +16,170 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => new _ChatPageState();
 }
 
-ListView chatList(data, myId) {
-  data.sort((Chat a, Chat b) => b.lastUpdate.compareTo(a.lastUpdate));
-
-  return ListView.builder(
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        int myIndex =
-            (data[index].partecipants[0].partecipant.id) == myId ? 0 : 1;
-
-        return tile(
-            data[index].partecipants[1 - myIndex].partecipant.name,
-            DateFormat('dd-MM-yyyy – kk:mm').format(data[index].lastUpdate),
-            (data[index].partecipants[myIndex].lastView)
-                .isAfter(data[index].lastUpdate),
-            data[index],
-            myId,
-            context);
-      });
-}
-
-ListTile tile(String title, String subtitle, bool read, Chat chat, String myId,
-    BuildContext context) {
-  if (read) {
-    return ListTile(
-      title: Text(title,
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
-          )),
-      subtitle: Text(subtitle),
-      leading: Icon(
-        Icons.mail_outline,
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatRoomPage(chat, myId),
-            settings: RouteSettings(
-              arguments: {'chat': chat},
-            ),
-          ),
-        );
-      },
-    );
-  } else {
-    return ListTile(
-      title: Text(title,
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
-          )),
-      subtitle: Text(subtitle),
-      leading: Icon(
-        Icons.mail,
-        color: Colors.blue[500],
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatRoomPage(chat, myId),
-            settings: RouteSettings(
-              arguments: {'chat': chat},
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class _ChatPageState extends State<ChatPage> {
   String myId = '';
-  String token = '';
+  int _listState = 0;
+
+  Map<String, Chat> chatsMap;
+
+  List<Chat> chats;
 
   @override
   void initState() {
+    chatsMap = new Map<String, Chat>();
+
+    chats = new List<Chat>();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ioConnect();
+      await getChats();
     });
 
     super.initState();
   }
 
-  Future ioConnect() async {
-    print("Connect");
-
-    chatSocket = IO.io(environment['url'] + '/chats', <String, dynamic>{
-      'transports': ['websocket'],
-      'query': {'token': await MyPreferences.getAuthCode()}
-    });
-
-    messageSocket = IO.io(environment['url'] + '/messages', <String, dynamic>{
-      'transports': ['websocket'],
-      'query': {'token': await MyPreferences.getAuthCode()}
-    });
-  }
-
-  Future<List<Chat>> getRuns() async {
+  Future getChats() async {
     var jwt = await MyPreferences.getAuthCode();
 
     myId = await MyPreferences.getId();
-    token = await MyPreferences.getAuthCode();
+
+    MySockets.chatSocket.emit('room', myId);
+
+    MySockets.chatSocket.on('chat', (jsonData) {
+      Chat chat = Chat.fromJson(jsonData);
+
+      chatsMap[chat.id] = chat;
+      chats.clear();
+      chatsMap.forEach((k, v) => chats.add(chatsMap[k]));
+      chats.sort((Chat a, Chat b) => b.lastUpdate.compareTo(a.lastUpdate));
+
+      setState(() {});
+    });
 
     var res = await http.get("${environment['url']}/chats", headers: {
       'Authorization': jwt,
     });
 
     if (res.statusCode == 200) {
-      List<Chat> chats =
+      List<Chat> historyChats =
           (json.decode(res.body) as List).map((i) => Chat.fromJson(i)).toList();
-      return chats;
+
+      historyChats.forEach((element) {
+        chatsMap[element.id] = element;
+      });
+      chats.clear();
+      chatsMap.forEach((k, v) => chats.add(v));
+
+      chats.sort((Chat a, Chat b) => b.lastUpdate.compareTo(a.lastUpdate));
+
+      setState(() {
+        _listState = 1;
+      });
     } else {
+      setState(() {
+        _listState = 2;
+      });
       throw Exception('Failed to load jobs from API');
+    }
+  }
+
+  ListView chatList() {
+    return ListView.builder(
+        itemCount: chats.length,
+        itemBuilder: (context, index) {
+          int myIndex =
+              (chats[index].partecipants[0].partecipant.id) == myId ? 0 : 1;
+
+          return tile(
+              chats[index].partecipants[1 - myIndex].partecipant.name,
+              DateFormat('dd-MM-yyyy – kk:mm').format(chats[index].lastUpdate),
+              (chats[index].partecipants[myIndex].lastView)
+                  .isAfter(chats[index].lastUpdate),
+              chats[index],
+              myId,
+              context);
+        });
+  }
+
+  ListTile tile(String title, String subtitle, bool read, Chat chat,
+      String myId, BuildContext context) {
+    if (read) {
+      return ListTile(
+        title: Text(title,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 20,
+            )),
+        subtitle: Text(subtitle),
+        leading: Icon(
+          Icons.mail_outline,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRoomPage(chat, myId),
+              settings: RouteSettings(
+                arguments: {'chat': chat},
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      return ListTile(
+        title: Text(title,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 20,
+            )),
+        subtitle: Text(subtitle),
+        leading: Icon(
+          Icons.mail,
+          color: Colors.blue[500],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRoomPage(chat, myId),
+              settings: RouteSettings(
+                arguments: {'chat': chat},
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    MySockets.chatSocket.clearListeners();
+
+    super.dispose();
+  }
+
+  Widget setChild() {
+    if (_listState == 1) {
+      return chatList();
+    } else if (_listState == 0) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      return Center(
+        child: Text("Error"),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Chat>>(
-      future: getRuns(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<Chat> data = snapshot.data;
-
-          return new Scaffold(
-            backgroundColor: Colors.white,
-            body: Container(
-              child: chatList(data, myId),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Container(
+        child: setChild(),
+      ),
     );
   }
 }
@@ -194,15 +215,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
     chatTitle = widget.chat.partecipants[1 - myIndex].partecipant.name;
 
+    /*
     if (messageSocketsMap.containsKey(widget.chat.id)) {
       messageSocket.clearListeners();
     } else {
       messageSocketsMap[widget.chat.id] = true;
     }
+     */
 
-    messageSocket.emit('room', widget.chat.id);
+    MySockets.messageSocket.emit('room', widget.chat.id);
 
-    messageSocket.on('message', (jsonData) {
+    MySockets.messageSocket.on('message', (jsonData) {
       Message message = Message.fromJson(jsonData);
 
       setState(() {
@@ -213,8 +236,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       chatHistory();
     });
-
-    setLastView();
 
     super.initState();
   }
@@ -241,20 +262,23 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     } else {
       throw Exception('Failed to load jobs from API');
     }
-  }
 
-  Future<bool> setLastView() async {
-    var jwt = await MyPreferences.getAuthCode();
-
-    var res = await http.post(
-        "${environment['url']}/chats/" + widget.chat.id + "/read",
+    //set last view
+    http.post("${environment['url']}/chats/" + widget.chat.id + "/read",
         headers: {
           'Authorization': jwt,
         });
+  }
 
-    if (res.statusCode == 200) {
-      print("read");
-    }
+  Future<bool> setOnClose() async {
+    MySockets.messageSocket.clearListeners();
+
+    var jwt = await MyPreferences.getAuthCode();
+
+    http.post("${environment['url']}/chats/" + widget.chat.id + "/read",
+        headers: {
+          'Authorization': jwt,
+        });
 
     return true;
   }
@@ -392,7 +416,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     width = MediaQuery.of(context).size.width;
 
     return WillPopScope(
-      onWillPop: setLastView,
+      onWillPop: setOnClose,
       child: Scaffold(
         appBar: AppBar(
           title: Text(chatTitle),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movite_app/commons/preferences.dart';
+import 'package:movite_app/commons/sockets.dart';
 import 'package:movite_app/pages/chat_page.dart';
 import 'package:movite_app/pages/code_page.dart';
 import 'package:movite_app/pages/event_page.dart';
@@ -37,6 +38,14 @@ class _HomePageState extends State<HomePage> {
     EventPage(),
     CodePage()
   ];
+
+  @override
+  void initState() {
+
+    MySockets().init();
+
+    super.initState();
+  }
 
   Future<void> _loginAlert() async {
     return showDialog<void>(
