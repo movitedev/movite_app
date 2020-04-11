@@ -75,11 +75,12 @@ ListView runsList(data, IconData icon) {
             DateFormat('dd-MM-yyyy – kk:mm').format(data[index].eventDate),
             icon,
             data[index].id,
+            (DateTime.now()).difference(data[index].eventDate).inMinutes<100,
             context);
       });
 }
 
-ListTile tile(String title, String subtitle, IconData icon, String id,
+ListTile tile(String title, String subtitle, IconData icon, String id, bool active,
         BuildContext context) =>
     ListTile(
       title: Text(title,
@@ -90,7 +91,7 @@ ListTile tile(String title, String subtitle, IconData icon, String id,
       subtitle: Text(subtitle),
       leading: Icon(
         icon,
-        color: Colors.blue[500],
+        color: active ? Colors.blue[500] : null,
       ),
       onTap: () {
         Navigator.push(

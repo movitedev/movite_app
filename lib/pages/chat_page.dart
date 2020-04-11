@@ -8,6 +8,7 @@ import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/commons/sockets.dart';
 import 'package:movite_app/models/Chat.dart';
 import 'package:movite_app/models/Message.dart';
+import 'package:movite_app/pages/profile_page.dart';
 
 class ChatPage extends StatefulWidget {
   static String tag = 'profile-page';
@@ -203,6 +204,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   ScrollController scrollController;
   Widget chatChild;
   String chatTitle;
+  String otherUserId = "";
 
   @override
   void initState() {
@@ -214,6 +216,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         (widget.chat.partecipants[0].partecipant.id) == widget.myId ? 0 : 1;
 
     chatTitle = widget.chat.partecipants[1 - myIndex].partecipant.name;
+
+    otherUserId = widget.chat.partecipants[1 - myIndex].partecipant.id;
 
     /*
     if (messageSocketsMap.containsKey(widget.chat.id)) {
@@ -421,6 +425,21 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         appBar: AppBar(
           title: Text(chatTitle),
           backgroundColor: Colors.lightBlueAccent,
+          actions: <Widget>[
+            FlatButton(
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(otherUserId, chatTitle),
+                  ),
+                );
+              },
+              child: Text("View Profile"),
+              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+            ),
+          ],
         ),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(

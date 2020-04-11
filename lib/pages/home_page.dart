@@ -6,6 +6,7 @@ import 'package:movite_app/pages/code_page.dart';
 import 'package:movite_app/pages/event_page.dart';
 import 'package:movite_app/pages/landing_page.dart';
 import 'package:movite_app/pages/movite_page.dart';
+import 'package:movite_app/pages/myprofile_page.dart';
 import 'package:movite_app/pages/profile_page.dart';
 import 'package:movite_app/pages/run_page.dart';
 
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilePage()),
+                MaterialPageRoute(builder: (context) => MyProfilePage()),
               );
             },
           ),
