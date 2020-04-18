@@ -231,35 +231,29 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.center,
                     child: GoogleSignInButton(
                       onPressed: () async {
-                        try {
-                          final GoogleSignInAccount googleUser =
-                              await _googleSignIn.signIn();
-                          final googleKey = await googleUser.authentication;
+                        final GoogleSignInAccount googleUser =
+                            await _googleSignIn.signIn();
+                        final googleKey = await googleUser.authentication;
 
-                          setState(() {
-                            if (_state == 0) {
-                              setState(() {
-                                _state = 1;
-                              });
-                            }
-                          });
-
-                          User user =
-                              await attemptGoogleLogin(googleKey.idToken);
-
-                          setState(() {
-                            _state = 0;
-                          });
-
-                          if (user != null) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()),
-                            );
+                        setState(() {
+                          if (_state == 0) {
+                            setState(() {
+                              _state = 1;
+                            });
                           }
-                        } catch (e) {
-                          showBar("Error, check your connection");
+                        });
+
+                        User user = await attemptGoogleLogin(googleKey.idToken);
+
+                        setState(() {
+                          _state = 0;
+                        });
+
+                        if (user != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
                         }
                       },
                       darkMode: true, // default: false
