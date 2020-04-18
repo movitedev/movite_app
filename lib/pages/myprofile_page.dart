@@ -158,6 +158,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
       width: 120,
       height: 65,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: children,
       ),
     );
@@ -174,18 +175,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
       children: <Widget>[
         Expanded(
             flex: 5,
-            child: Column(
-                children: <Widget>[
-                  ageField,
-                  roleField,
-                ])),
+            child: Column(children: <Widget>[
+              ageField,
+              roleField,
+            ])),
         Expanded(
             flex: 5,
-            child: Column(
-                children: <Widget>[
-                  placeField,
-                  sinceField,
-                ])),
+            child: Column(children: <Widget>[
+              placeField,
+              sinceField,
+            ])),
       ],
     );
   }
@@ -250,47 +249,41 @@ class _MyProfilePageState extends State<MyProfilePage> {
       ),
       backgroundColor: Colors.white,
       body: Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(left: 30.0, right: 30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                height: 15.0,
-              ),
-              Container(
-                child: Hero(
-                  tag: 'hero',
-                  child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    radius: 120.0,
-                    child: Image(
-                      image: AssetImage('assets/profile.png'),
-                    ),
+        child: ListView(
+          children: <Widget>[
+            SizedBox(
+              height: 15.0,
+            ),
+            Container(
+              child: Hero(
+                tag: 'hero',
+                child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: 120.0,
+                  child: Image(
+                    image: AssetImage('assets/profile.png'),
                   ),
                 ),
               ),
-              Column(
-                children: <Widget>[
-                  SizedBox(height: 15.0),
-                  nameText,
-                  SizedBox(height: 10.0),
-                  runsTab(),
-                  SizedBox(height: 30.0),
-                  profileText,
-                  SizedBox(
-                    height: 30,
-                  ),
-                  informationTab(),
-                  SizedBox(height: 30.0),
-                  text,
-                  SizedBox(height: 10.0),
-                  emailText,
-                  addFlat,
-                ],
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 15.0),
+            nameText,
+            SizedBox(height: 10.0),
+            runsTab(),
+            SizedBox(height: 30.0),
+            profileText,
+            SizedBox(
+              height: 30,
+            ),
+            informationTab(),
+            SizedBox(height: 30.0),
+            text,
+            SizedBox(height: 10.0),
+            emailText,
+            Column(children: <Widget>[
+              addFlat,
+            ]),
+          ],
         ),
       ),
     );

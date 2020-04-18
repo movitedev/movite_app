@@ -7,7 +7,6 @@ import 'package:movite_app/pages/event_page.dart';
 import 'package:movite_app/pages/landing_page.dart';
 import 'package:movite_app/pages/movite_page.dart';
 import 'package:movite_app/pages/myprofile_page.dart';
-import 'package:movite_app/pages/profile_page.dart';
 import 'package:movite_app/pages/run_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,7 +41,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-
     MySockets().init();
 
     super.initState();
@@ -78,8 +76,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget menuChild(IconData iconData, String title) {
+    return Row(children: <Widget>[
+      Icon(
+        iconData,
+        color: Colors.blue[500],
+      ),
+      SizedBox(
+        width: 10,
+      ),
+      Text(title)
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
+    Map args = ModalRoute.of(context).settings.arguments;
+
+    if (args != null) {
+      if (args.containsKey('showBar1')) {
+        if (args['showBar1']) {
+          _selectedIndex = 0;
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _selectedIndex = 2);
+        }
+      }
+
+      if (args.containsKey('showBar2')) {
+        if (args['showBar2']) {
+          _selectedIndex = 0;
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _selectedIndex = 2);
+        }
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
@@ -103,11 +134,11 @@ class _HomePageState extends State<HomePage> {
               return [
                 PopupMenuItem(
                   value: 0,
-                  child: Text("Logout"),
+                  child: menuChild(Icons.exit_to_app, "Logout"),
                 ),
                 PopupMenuItem(
                   value: 1,
-                  child: Text("About"),
+                  child: menuChild(Icons.info, "About"),
                 )
               ];
             },

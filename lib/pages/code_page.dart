@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
@@ -254,6 +253,4 @@ class _CodePageState extends State<CodePage> {
                   SizedBox(height: 8.0),
                 ]))));
   }
-
-
 }

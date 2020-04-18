@@ -231,29 +231,35 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.center,
                     child: GoogleSignInButton(
                       onPressed: () async {
-                        final GoogleSignInAccount googleUser =
-                            await _googleSignIn.signIn();
-                        final googleKey = await googleUser.authentication;
+                        try {
+                          final GoogleSignInAccount googleUser =
+                              await _googleSignIn.signIn();
+                          final googleKey = await googleUser.authentication;
 
-                        setState(() {
-                          if (_state == 0) {
-                            setState(() {
-                              _state = 1;
-                            });
+                          setState(() {
+                            if (_state == 0) {
+                              setState(() {
+                                _state = 1;
+                              });
+                            }
+                          });
+
+                          User user =
+                              await attemptGoogleLogin(googleKey.idToken);
+
+                          setState(() {
+                            _state = 0;
+                          });
+
+                          if (user != null) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage()),
+                            );
                           }
-                        });
-
-                        User user = await attemptGoogleLogin(googleKey.idToken);
-
-                        setState(() {
-                          _state = 0;
-                        });
-
-                        if (user != null) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
-                          );
+                        } catch (e) {
+                          showBar("Error, check your connection");
                         }
                       },
                       darkMode: true, // default: false
@@ -267,178 +273,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-/*
-    return FutureBuilder<bool>(
-        future: RouteChecker().checkIfAuthenticated(),
-        // function where you call your api
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          // AsyncSnapshot<Your object type>
-          //
-          if (snapshot.hasData) {
-            if (snapshot.data) {
-              return RestrictedWidget().restricted();
-            } else {
-              return Scaffold(
-                key: _scaffoldKey,
-                backgroundColor: Colors.white,
-                body: Center(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 800),
-                      child: Form(
-                        key: _formKey,
-                        child: ListView(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.only(
-                              left: 40.0, right: 40.0, top: 40.0),
-                          children: <Widget>[
-                            CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              radius: 48.0,
-                              child: Image.asset('assets/logo.png'),
-                            ),
-                            SizedBox(height: 48.0),
-                            TextFormField(
-                              controller: emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                icon: Icon(Icons.mail),
-                                labelText: 'E-Mail',
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
-                              ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 12.0),
-                            TextFormField(
-                              controller: passwordController,
-                              autofocus: false,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                icon: Icon(Icons.lock),
-                                labelText: 'Password',
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
-                              ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 24.0),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16.0),
-                              child: RaisedButton(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                onPressed: () async {
-                                  if (_formKey.currentState.validate()) {
-                                    setState(() {
-                                      if (_state == 0) {
-                                        setState(() {
-                                          _state = 1;
-                                        });
-                                      }
-                                    });
-
-                                    String email = emailController.text;
-                                    String password = passwordController.text;
-                                    User user =
-                                        await attemptLogIn(email, password);
-
-                                    setState(() {
-                                      _state = 0;
-                                    });
-
-                                    if (user != null) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(builder: (context) =>
-                                            HomePage()),
-                                      );
-                                    }
-                                  }
-                                },
-                                padding: EdgeInsets.all(12),
-                                color: Colors.lightBlueAccent,
-                                child: setButtonChild(),
-                              ),
-                            ),
-                            FlatButton(
-                              child: Text(
-                                'Create New Account',
-                                style: TextStyle(
-                                    color: Colors.black87,
-                                    decoration: TextDecoration.underline),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) =>
-                                      LoginPage()),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 48.0),
-                            Align(
-                              alignment: Alignment.center,
-                              child: GoogleSignInButton(
-                                onPressed: () async {
-                                  final GoogleSignInAccount googleUser =
-                                      await _googleSignIn.signIn();
-                                  final googleKey =
-                                      await googleUser.authentication;
-
-                                  setState(() {
-                                    if (_state == 0) {
-                                      setState(() {
-                                        _state = 1;
-                                      });
-                                    }
-                                  });
-
-                                  User user = await attemptGoogleLogin(
-                                      googleKey.idToken);
-
-                                  setState(() {
-                                    _state = 0;
-                                  });
-
-                                  if (user != null) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) =>
-                                          HomePage()),
-                                    );
-                                  }
-                                },
-                                darkMode: true, // default: false
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }
-          } else {
-            return Scaffold(
-
-            );
-          }
-        });
-        */
   }
 }

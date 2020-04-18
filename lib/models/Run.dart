@@ -52,8 +52,8 @@ class RunNoPopulate {
   DateTime eventDate;
   DateTime createdAt;
 
-  RunNoPopulate(String id, Place from, Place name, String driver, DateTime eventDate,
-      DateTime createdAt) {
+  RunNoPopulate(String id, Place from, Place name, String driver,
+      DateTime eventDate, DateTime createdAt) {
     this.id = id;
     this.from = from;
     this.to = to;
@@ -88,18 +88,27 @@ class RunDetails {
   Place from;
   Place to;
   Passenger driver;
+  bool active;
   List<Passenger> passengers;
   List<Passenger> validated;
   DateTime eventDate;
   DateTime createdAt;
 
-  RunDetails(String id, Place from, Place name, Passenger driver,
-      List<Passenger> passengers, List<Passenger> validated, DateTime eventDate,
+  RunDetails(
+      String id,
+      Place from,
+      Place name,
+      Passenger driver,
+      bool active,
+      List<Passenger> passengers,
+      List<Passenger> validated,
+      DateTime eventDate,
       DateTime createdAt) {
     this.id = id;
     this.from = from;
     this.to = to;
     this.driver = driver;
+    this.active = active;
     this.passengers = passengers;
     this.validated = validated;
     this.eventDate = eventDate;
@@ -111,11 +120,12 @@ class RunDetails {
         from = Place.fromJson(json['from']),
         to = Place.fromJson(json['to']),
         driver = Passenger.fromJson(json['driver']),
-        passengers = (json['passengers'] as List).map((i) =>
-            Passenger.fromJson(i['passenger']))
+        active = json['active'],
+        passengers = (json['passengers'] as List)
+            .map((i) => Passenger.fromJson(i['passenger']))
             .toList(),
-        validated = (json['validated'] as List).map((i) =>
-            Passenger.fromJson(i['passenger']))
+        validated = (json['validated'] as List)
+            .map((i) => Passenger.fromJson(i['passenger']))
             .toList(),
         eventDate = DateTime.parse(json['eventDate']),
         createdAt = DateTime.parse(json['createdAt']);
@@ -126,6 +136,7 @@ class RunDetails {
       'from': from.toJson(),
       'to': to.toJson(),
       'driver': driver.toJson(),
+      'active': active,
       'passengers': passengers.map((tag) => tag.toJson()).toList(),
       'validated': validated.map((tag) => tag.toJson()).toList(),
       'eventDate': eventDate,

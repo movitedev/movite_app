@@ -34,11 +34,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-
       var jwt = await MyPreferences.getAuthCode();
 
-      var res = await http
-          .get("${environment['url']}/users/" + widget.id, headers: {
+      var res =
+          await http.get("${environment['url']}/users/" + widget.id, headers: {
         'Authorization': jwt,
       });
 
@@ -85,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
     List<Widget> children = List<Widget>();
 
     Widget driver =
-    statField(Icons.directions_car, "Driver Runs", driverNumber);
+        statField(Icons.directions_car, "Driver Runs", driverNumber);
     Widget passenger = statField(
         Icons.airline_seat_recline_normal, "Passenger Runs", passengerNumber);
 
@@ -170,6 +169,7 @@ class _ProfilePageState extends State<ProfilePage> {
       width: 120,
       height: 65,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: children,
       ),
     );
@@ -179,32 +179,29 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget ageField = informationField("Age", age, Icons.face);
     Widget roleField = informationField("Role", role, Icons.verified_user);
     Widget sinceField =
-    informationField("Since", createdAt, Icons.calendar_today);
+        informationField("Since", createdAt, Icons.calendar_today);
     Widget placeField = informationField("Place", "Cles", Icons.place);
 
     return Row(
       children: <Widget>[
         Expanded(
             flex: 5,
-            child: Column(
-                children: <Widget>[
-                  ageField,
-                  roleField,
-                ])),
+            child: Column(children: <Widget>[
+              ageField,
+              roleField,
+            ])),
         Expanded(
             flex: 5,
-            child: Column(
-                children: <Widget>[
-                  placeField,
-                  sinceField,
-                ])),
+            child: Column(children: <Widget>[
+              placeField,
+              sinceField,
+            ])),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-
     final profileText = Text(
       'User information',
       textAlign: TextAlign.center,
@@ -230,43 +227,36 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       backgroundColor: Colors.white,
       body: Center(
-        child: SingleChildScrollView(
+        child: ListView(
           padding: EdgeInsets.only(left: 30.0, right: 30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                height: 15.0,
-              ),
-              Container(
-                child: Hero(
-                  tag: 'hero',
-                  child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    radius: 120.0,
-                    child: Image(
-                      image: AssetImage('assets/profile.png'),
-                    ),
+          children: <Widget>[
+            SizedBox(
+              height: 15.0,
+            ),
+            Container(
+              child: Hero(
+                tag: 'hero',
+                child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: 120.0,
+                  child: Image(
+                    image: AssetImage('assets/profile.png'),
                   ),
                 ),
               ),
-              Column(
-                children: <Widget>[
-                  SizedBox(height: 15.0),
-                  nameText,
-                  SizedBox(height: 10.0),
-                  runsTab(),
-                  SizedBox(height: 30.0),
-                  profileText,
-                  SizedBox(
-                    height: 30,
-                  ),
-                  informationTab(),
-                  SizedBox(height: 10.0),
-                ],
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 15.0),
+            nameText,
+            SizedBox(height: 10.0),
+            runsTab(),
+            SizedBox(height: 30.0),
+            profileText,
+            SizedBox(
+              height: 30,
+            ),
+            informationTab(),
+            SizedBox(height: 10.0),
+          ],
         ),
       ),
     );
