@@ -92,7 +92,7 @@ class _ChatPageState extends State<ChatPage> {
 
           return tile(
               chats[index].partecipants[1 - myIndex].partecipant.name,
-              DateFormat('dd-MM-yyyy – kk:mm').format(chats[index].lastUpdate),
+              DateFormat('dd-MM-yyyy – kk:mm').format(chats[index].lastUpdate.toLocal()),
               (chats[index].partecipants[myIndex].lastView)
                   .isAfter(chats[index].lastUpdate),
               chats[index],
@@ -316,7 +316,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               ),
               Text(
                 DateFormat('dd-MM-yyyy – kk:mm')
-                    .format(messages[index].createdAt),
+                    .format(messages[index].createdAt.toLocal()),
                 style: TextStyle(color: Colors.white70, fontSize: 12.0),
               ),
             ],

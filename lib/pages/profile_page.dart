@@ -48,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
         email = user.email;
         role = user.role;
         age = user.age.toString();
-        createdAt = DateFormat('dd-MM-yyyy').format(user.createdAt);
+        createdAt = DateFormat('dd-MM-yyyy').format(user.createdAt.toLocal());
       }
 
       await getStats();

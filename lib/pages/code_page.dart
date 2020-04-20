@@ -169,7 +169,7 @@ class _CodePageState extends State<CodePage> {
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
                     )),
-                Text(DateFormat('dd-MM-yyyy – kk:mm').format(run.eventDate)),
+                Text(DateFormat('dd-MM-yyyy – kk:mm').format(run.eventDate.toLocal())),
               ])));
         }
       });

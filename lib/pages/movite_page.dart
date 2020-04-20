@@ -116,7 +116,7 @@ ListView runsList(data, bool driver) {
       itemBuilder: (context, index) {
         return tile(
             data[index].from.name + " - " + data[index].to.name,
-            DateFormat('dd-MM-yyyy – kk:mm').format(data[index].eventDate),
+            DateFormat('dd-MM-yyyy – kk:mm').format(data[index].eventDate.toLocal()),
             data[index].id,
             (DateTime.now()).difference(data[index].eventDate).inMinutes < 100,
             driver,
@@ -524,7 +524,7 @@ class _DetailsPageState extends State<DetailsPage> {
   Widget eventDate(DateTime dateTime) {
     return childElement(
         "Event Date",
-        DateFormat('dd-MM-yyyy – kk:mm').format(dateTime),
+        DateFormat('dd-MM-yyyy – kk:mm').format(dateTime.toLocal()),
         Icons.calendar_today);
   }
 
@@ -724,7 +724,7 @@ class _DetailsPageState extends State<DetailsPage> {
                               run.to.name +
                               " on date " +
                               DateFormat('dd-MM-yyyy – kk:mm')
-                                  .format(run.eventDate) +
+                                  .format(run.eventDate.toLocal()) +
                               " has been deleted."
                         });
                   });
@@ -823,7 +823,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             run.to.name +
                             " on date " +
                             DateFormat('dd-MM-yyyy – kk:mm')
-                                .format(run.eventDate) +
+                                .format(run.eventDate.toLocal()) +
                             "."
                       });
                 } else {
@@ -922,7 +922,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             run.to.name +
                             " on date " +
                             DateFormat('dd-MM-yyyy – kk:mm')
-                                .format(run.eventDate) +
+                                .format(run.eventDate.toLocal()) +
                             "."
                       });
                 } else {

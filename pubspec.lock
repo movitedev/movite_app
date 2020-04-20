@@ -83,6 +83,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.0"
+  flutter_google_places:
+    dependency: "direct main"
+    description:
+      name: flutter_google_places
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -93,6 +100,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  google_maps_webservice:
+    dependency: "direct main"
+    description:
+      name: google_maps_webservice
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.16"
   google_sign_in:
     dependency: "direct main"
     description:
@@ -156,6 +170,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  location:
+    dependency: "direct main"
+    description:
+      name: location
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.2"
+  location_platform_interface:
+    dependency: transitive
+    description:
+      name: location_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  location_web:
+    dependency: transitive
+    description:
+      name: location_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   logging:
     dependency: transitive
     description:
@@ -198,6 +233,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   qr:
     dependency: transitive
     description:
@@ -219,6 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.23.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -315,6 +364,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  uuid:
+    dependency: "direct main"
+    description:
+      name: uuid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.4"
   vector_math:
     dependency: transitive
     description:
@@ -331,4 +387,4 @@ packages:
     version: "3.5.0"
 sdks:
   dart: ">=2.6.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.4 <2.0.0"
+  flutter: ">=1.12.13+hotfix.5 <2.0.0"
