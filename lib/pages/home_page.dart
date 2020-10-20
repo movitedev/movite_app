@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/commons/sockets.dart';
+import 'package:movite_app/pages/about_page.dart';
 import 'package:movite_app/pages/chat_page.dart';
 import 'package:movite_app/pages/code_page.dart';
 import 'package:movite_app/pages/event_page.dart';
@@ -28,6 +29,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> handler(value) async {
     if (value == 0) {
       _loginAlert();
+    } else if (value == 1){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AboutPage()),
+      );
     }
   }
 

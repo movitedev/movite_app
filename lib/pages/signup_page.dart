@@ -54,13 +54,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<bool> attemptSignUp(
       String email, String password, String name, String age) async {
-    var res = await http.post("${environment['url']}/users", body: {
-      "email": email,
-      "password": password,
-      "name": name,
-      "age": age,
-      "home": json.encode(global.fromPlace.toJson())
-    });
+    var res = await http.post("${environment['url']}/users",
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "email": email,
+          "password": password,
+          "name": name,
+          "age": age,
+          "home": global.fromPlace.toJson()
+        }));
     if (res.statusCode == 201) {
       return true;
     } else if (res.statusCode == 409) {

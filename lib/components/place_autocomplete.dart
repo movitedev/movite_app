@@ -70,12 +70,10 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
         );
 
         Place place = await displayPrediction(p);
-
+        widget.controller.text = place.name;
         if (widget.from) {
-          widget.controller.text = place.name;
           global.fromPlace = place;
         } else {
-          widget.controller.text = place.name;
           global.toPlace = place;
         }
       },

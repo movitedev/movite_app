@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EventPage extends StatefulWidget {
@@ -11,18 +12,28 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     final text = Text(
-      'Event,',
+      'Work in progress',
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.black54,
-        fontSize: 13.0,
+        fontSize: 24.0,
       ),
     );
 
     return new Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        child: text,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: 48.0,
+              child: Image.asset('assets/wip.png'),
+            ),
+            text,
+          ],
+        ),
       ),
     );
   }

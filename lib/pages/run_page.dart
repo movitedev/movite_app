@@ -3,7 +3,6 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:movite_app/components/datetime_selector.dart';
 import 'package:movite_app/components/place_selector.dart';
 import 'package:movite_app/pages/search_page.dart';
-import 'package:movite_app/commons/global_variables.dart' as global;
 
 class RunPage extends StatefulWidget {
   static String tag = 'run-page';
@@ -61,7 +60,7 @@ class _RunPageState extends State<RunPage> {
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
             children: <Widget>[
               Text(
                 "Da dove parti?",
