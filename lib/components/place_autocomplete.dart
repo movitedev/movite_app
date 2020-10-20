@@ -4,6 +4,7 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
 import 'package:movite_app/models/Place.dart';
+import 'package:movite_app/models/Location.dart' as myLoc;
 import 'package:uuid/uuid.dart';
 
 String kGoogleApiKey = DotEnv().env['kGoogleApiKey'];
@@ -20,9 +21,27 @@ class PlaceAutocomplete extends StatefulWidget {
 }
 
 class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
-  Place place;
-
   String token = new Uuid().v4();
+
+  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
+
+  Future<Place> displayPrediction(Prediction p) async {
+    Place place;
+    if (p != null) {
+      PlacesDetailsResponse detail =
+          await _places.getDetailsByPlaceId(p.placeId);
+
+      double lat = detail.result.geometry.location.lat;
+      double lng = detail.result.geometry.location.lng;
+      String name = detail.result.name;
+
+      List coordinates = [lng, lat];
+      myLoc.Location location = myLoc.Location("Point", coordinates);
+
+      place = Place (name, location);
+    }
+    return place;
+  }
 
   void onError(PlacesAutocompleteResponse response) {
     print(response.errorMessage);
@@ -50,12 +69,15 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
           components: [Component(Component.country, "it")],
         );
 
+        Place place = await displayPrediction(p);
+
         if (widget.from) {
-          global.fromPlace = null;
+          widget.controller.text = place.name;
+          global.fromPlace = place;
         } else {
-          global.toPlace = null;
+          widget.controller.text = place.name;
+          global.toPlace = place;
         }
-        print(p.toString());
       },
       validator: (value) {
         if (value.isEmpty) {

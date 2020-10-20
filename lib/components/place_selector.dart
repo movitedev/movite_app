@@ -48,7 +48,7 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                     ),
                   ]),
               onPressed: () async {
-                Place place = global.fromPlace =
+                Place place =
                     new Place("Home", (await MyPreferences.getHome()).location);
                 if (widget.from) {
                   global.fromPlace = place;
@@ -57,9 +57,6 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                 }
 
                 widget.controller.text = place.name;
-
-                print(place.location.coordinates[0]);
-                print(place.location.coordinates[1]);
               },
             ),
           ),
@@ -112,8 +109,6 @@ class _PlaceSelectorState extends State<PlaceSelector> {
 
                 widget.controller.text = place.name;
 
-                print(place.location.coordinates[0]);
-                print(place.location.coordinates[1]);
               },
             ),
           ),
