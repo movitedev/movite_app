@@ -1,314 +1,125 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:intl/intl.dart';
-import 'package:location/location.dart' as gps;
-import 'package:uuid/uuid.dart';
-
-const kGoogleApiKey = "AIzaSyBsCUBVW9yHpOi5nFaQ7xuSJ6_1kCXJIx0";
+import 'package:movite_app/components/datetime_selector.dart';
+import 'package:movite_app/components/place_selector.dart';
+import 'package:movite_app/pages/search_page.dart';
+import 'package:movite_app/commons/global_variables.dart' as global;
 
 class RunPage extends StatefulWidget {
-  static String tag = 'profile-page';
+  static String tag = 'run-page';
 
   @override
   _RunPageState createState() => new _RunPageState();
 }
 
 class _RunPageState extends State<RunPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final fromController = TextEditingController();
   final toController = TextEditingController();
   final dateController = TextEditingController();
-
-  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
-
-  String token = new Uuid().v4();
-
-  gps.Location location = new gps.Location();
-
-  DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.now();
-
-  bool _serviceEnabled;
-  gps.PermissionStatus _permissionGranted;
-  gps.LocationData _locationData;
-
-  Future<Null> displayPrediction(Prediction p) async {
-    if (p != null) {
-      PlacesDetailsResponse detail =
-          await _places.getDetailsByPlaceId(p.placeId);
-
-      double lat = detail.result.geometry.location.lat;
-      double lng = detail.result.geometry.location.lng;
-
-      print(p.toString());
-      print(lat);
-      print(lng);
-    }
-  }
 
   void onError(PlacesAutocompleteResponse response) {
     print(response.errorMessage);
   }
 
-  Future _selectDateTime(BuildContext context) async {
-    final DateTime datePicked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2101),
-    );
-
-    if (datePicked == null) {
-      return;
-    }
-
-    final TimeOfDay timePicked = await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
-      builder: (BuildContext context, Widget child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child,
-        );
-      },
-    );
-
-    if (timePicked == null) {
-      return;
-    }
-
-    setState(() {
-      dateController.text = DateFormat('dd-MM-yyyy – kk:mm').format(DateTime(
-              datePicked.year,
-              datePicked.month,
-              datePicked.day,
-              timePicked.hour,
-              timePicked.minute)
-          .toLocal());
-    });
-  }
-
-  Widget placeInsert(String title) {
-    return Column(children: <Widget>[
-      TextField(
-        controller: fromController,
-        readOnly: true,
-        autofocus: false,
-        decoration: InputDecoration(
-          icon: Icon(Icons.place),
-          labelText: title,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
-        ),
-        onTap: () async {
-          Prediction p = await PlacesAutocomplete.show(
-            context: context,
-            apiKey: kGoogleApiKey,
-            onError: onError,
-            sessionToken: token,
-            mode: Mode.overlay,
-            language: "it",
-            components: [Component(Component.country, "it")],
-          );
-
-          print(p.toString());
-        },
-      ),
-      Row(
-        children: <Widget>[
-          Expanded(
-            flex: 5,
-            child: FlatButton(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(Icons.home),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'Home',
-                      style: TextStyle(
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ]),
-              onPressed: () {},
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: FlatButton(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(Icons.gps_fixed),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'My Position',
-                      style: TextStyle(
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ]),
-              onPressed: () async {
-                _serviceEnabled = await location.serviceEnabled();
-                if (!_serviceEnabled) {
-                  _serviceEnabled = await location.requestService();
-                  if (!_serviceEnabled) {
-                    return;
-                  }
-                }
-
-                _permissionGranted = await location.hasPermission();
-                if (_permissionGranted == gps.PermissionStatus.denied) {
-                  _permissionGranted = await location.requestPermission();
-                  if (_permissionGranted != gps.PermissionStatus.granted) {
-                    return;
-                  }
-                }
-
-                _locationData = await location.getLocation();
-
-                print(_locationData.latitude);
-                print(_locationData.longitude);
-              },
-            ),
-          ),
-        ],
-      ),
-    ]);
-  }
-
-  Widget dateInsert(String title) {
-    return Column(children: <Widget>[
-      TextField(
-        controller: dateController,
-        readOnly: true,
-        autofocus: false,
-        decoration: InputDecoration(
-          icon: Icon(Icons.calendar_today),
-          labelText: title,
-          contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
-        ),
-        onTap: () async {
-          await _selectDateTime(context);
-        },
-      ),
-      Row(
-        children: <Widget>[
-          Expanded(
-            flex: 5,
-            child: FlatButton(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(Icons.timer),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'Fra poco',
-                      style: TextStyle(
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ]),
-              onPressed: () {
-                dateController.text = DateFormat('dd-MM-yyyy – kk:mm')
-                    .format(DateTime.now().toLocal());
-              },
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: FlatButton(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(Icons.timer),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      'In un paio di ore',
-                      style: TextStyle(
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ]),
-              onPressed: () {
-                dateController.text = DateFormat('dd-MM-yyyy – kk:mm')
-                    .format((DateTime.now()).add(Duration(hours: 2)).toLocal());
-              },
-            ),
-          ),
-        ],
-      ),
-    ]);
+  void showBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(value),
+      behavior: SnackBarBehavior.floating,
+      elevation: 8,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final text = Text(
-      'Run,',
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        color: Colors.black54,
-        fontSize: 13.0,
-      ),
-    );
+    Map args = ModalRoute.of(context).settings.arguments;
+
+    if (args != null) {
+      if (args.containsKey('showBar3')) {
+        if (args['showBar3']) {
+          args['showBar3'] = false;
+          WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => showBar("Run offered"));
+        }
+      }
+      if (args.containsKey('showBar4')) {
+        if (args['showBar4']) {
+          args['showBar4'] = false;
+          WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => showBar("Request sent"));
+        }
+      }
+
+    }
 
     return new Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: Center(
-        child: ListView(
-          padding: EdgeInsets.all(20),
-          children: <Widget>[
-            Text(
-              "Dove vuoi andare?",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20.0,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+            children: <Widget>[
+              Text(
+                "Da dove parti?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 20.0,
+                ),
               ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            placeInsert("A"),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Da dove parti?",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20.0,
+              PlaceSelector("Da", fromController, true),
+              SizedBox(
+                height: 5,
               ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            placeInsert("Da"),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Quando?",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 20.0,
+              Text(
+                "Dove vuoi andare?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 20.0,
+                ),
               ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            dateInsert("Quando"),
-          ],
+              PlaceSelector("A", toController, false),
+              SizedBox(
+                height: 5,
+              ),
+              Text(
+                "Quando?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 20.0,
+                ),
+              ),
+              DatetimeSelector("Quando", dateController),
+              SizedBox(
+                height: 5,
+              ),
+              Align(
+                  child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchPage(),
+                            ),
+                          );
+                        }
+                      },
+                      padding: EdgeInsets.all(20),
+                      color: Colors.lightBlueAccent,
+                      child: Text('Search',
+                          style: TextStyle(color: Colors.white)))),
+            ],
+          ),
         ),
       ),
     );

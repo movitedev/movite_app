@@ -26,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String email = "";
   String role = "";
   String age = "";
+  String home = "";
   String createdAt = "";
 
   int driverNumber = 0;
@@ -47,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
         name = user.name;
         email = user.email;
         role = user.role;
+        home = user.home.name;
         age = user.age.toString();
         createdAt = DateFormat('dd-MM-yyyy').format(user.createdAt.toLocal());
       }
@@ -180,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Widget roleField = informationField("Role", role, Icons.verified_user);
     Widget sinceField =
         informationField("Since", createdAt, Icons.calendar_today);
-    Widget placeField = informationField("Place", "Cles", Icons.place);
+    Widget placeField = informationField("Place", home, Icons.place);
 
     return Row(
       children: <Widget>[

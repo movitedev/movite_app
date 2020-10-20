@@ -8,6 +8,7 @@ import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/commons/sockets.dart';
 import 'package:movite_app/models/Chat.dart';
 import 'package:movite_app/models/Message.dart';
+import 'package:movite_app/models/UsersReduced.dart';
 import 'package:movite_app/pages/profile_page.dart';
 
 class ChatPage extends StatefulWidget {
@@ -73,6 +74,7 @@ class _ChatPageState extends State<ChatPage> {
       chats.sort((Chat a, Chat b) => b.lastUpdate.compareTo(a.lastUpdate));
 
       setState(() {
+        print("update");
         _listState = 1;
       });
     } else {
@@ -92,7 +94,8 @@ class _ChatPageState extends State<ChatPage> {
 
           return tile(
               chats[index].partecipants[1 - myIndex].partecipant.name,
-              DateFormat('dd-MM-yyyy – kk:mm').format(chats[index].lastUpdate.toLocal()),
+              DateFormat('dd-MM-yyyy – kk:mm')
+                  .format(chats[index].lastUpdate.toLocal()),
               (chats[index].partecipants[myIndex].lastView)
                   .isAfter(chats[index].lastUpdate),
               chats[index],
@@ -287,6 +290,84 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return true;
   }
 
+  Widget requestButtons(Message message) {
+    FlatButton accept = FlatButton(
+      child: Text("Accept"),
+      onPressed: () async {
+        var jwt = await MyPreferences.getAuthCode();
+
+        int myIndex =
+            (widget.chat.partecipants[0].partecipant.id) == widget.myId ? 0 : 1;
+
+        Passenger passenger = widget.chat.partecipants[1 - myIndex].partecipant;
+
+        var res = await http.post(
+            "${environment['url']}/runs/" +
+                message.run +
+                "/add/" +
+                passenger.id,
+            headers: {
+              'Authorization': jwt,
+            });
+
+        if (res.statusCode == 200) {
+          await http.post(
+              "${environment['url']}/messages/" + message.id + "/removerequest",
+              headers: {
+                'Authorization': jwt,
+              });
+
+          message.activeRequest = false;
+
+          var re = RegExp(r'(?<=passaggio per)(.*)');
+          var match = re.firstMatch(message.message);
+
+          await http.post(
+              "${environment['url']}/chats/" + widget.chat.id + '/messages',
+              headers: {
+                'Authorization': jwt,
+              },
+              body: {
+                "message": "Richiesta per" + match.group(0) + " accettata"
+              });
+        } else {
+          throw Exception('Failed to load jobs from API');
+        }
+      },
+    );
+    FlatButton deny = FlatButton(
+      child: Text("Deny"),
+      onPressed: () async {
+        var jwt = await MyPreferences.getAuthCode();
+
+        await http.post(
+            "${environment['url']}/messages/" + message.id + "/removerequest",
+            headers: {
+              'Authorization': jwt,
+            });
+
+        message.activeRequest = false;
+
+        var re = RegExp(r'(?<=passaggio per)(.*)');
+        var match = re.firstMatch(message.message);
+
+        await http.post(
+            "${environment['url']}/chats/" + widget.chat.id + '/messages',
+            headers: {
+              'Authorization': jwt,
+            },
+            body: {
+              "message": "Richiesta per" + match.group(0) + " rifiutata"
+            });
+
+      },
+    );
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [accept, deny],
+    );
+  }
+
   Widget buildSingleMessage(int index) {
     bool left = messages[index].author != widget.myId;
     return Container(
@@ -319,6 +400,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     .format(messages[index].createdAt.toLocal()),
                 style: TextStyle(color: Colors.white70, fontSize: 12.0),
               ),
+              messages[index].activeRequest != null &&
+                      messages[index].activeRequest &&
+                      left
+                  ? requestButtons(messages[index])
+                  : Container()
             ],
           )),
     );
@@ -377,11 +463,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               });
 
           if (res.statusCode != 201) {
-            _scaffoldKey.currentState.showSnackBar(new SnackBar(
-              content: new Text("Unable to send the message"),
-              behavior: SnackBarBehavior.floating,
-              elevation: 8,
-            ));
+            showBar("Unable to send the message");
           }
 
           //Add the message to the list
@@ -414,6 +496,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     );
   }
 
+  void showBar(String value) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(value),
+      behavior: SnackBarBehavior.floating,
+      elevation: 8,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height - 80 - 80;
@@ -422,6 +512,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return WillPopScope(
       onWillPop: setOnClose,
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(chatTitle),
           backgroundColor: Colors.lightBlueAccent,

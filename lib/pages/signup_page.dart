@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movite_app/commons/env.dart';
+import 'package:movite_app/commons/global_variables.dart' as global;
+import 'package:movite_app/components/place_autocomplete.dart';
 
 import 'login_page.dart';
 
@@ -20,6 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final nameController = TextEditingController();
   final ageController = TextEditingController();
   final conpasController = TextEditingController();
+  final homeController = TextEditingController();
 
   @override
   void dispose() {
@@ -29,6 +34,7 @@ class _SignUpPageState extends State<SignUpPage> {
     nameController.dispose();
     ageController.dispose();
     conpasController.dispose();
+    homeController.dispose();
 
     super.dispose();
   }
@@ -48,8 +54,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<bool> attemptSignUp(
       String email, String password, String name, String age) async {
-    var res = await http.post("${environment['url']}/users",
-        body: {"email": email, "password": password, "name": name, "age": age});
+    var res = await http.post("${environment['url']}/users", body: {
+      "email": email,
+      "password": password,
+      "name": name,
+      "age": age,
+      "home": json.encode(global.fromPlace.toJson())
+    });
     if (res.statusCode == 201) {
       return true;
     } else if (res.statusCode == 409) {
@@ -154,6 +165,8 @@ class _SignUpPageState extends State<SignUpPage> {
       },
     );
 
+    final home = PlaceAutocomplete("Home", homeController, true);
+
     final loginButton = Hero(
       tag: 'hero',
       child: Padding(
@@ -223,27 +236,22 @@ class _SignUpPageState extends State<SignUpPage> {
               key: _formKey,
               child: Container(
                 child: ListView(
+                  padding: EdgeInsets.only(left: 40.0, right: 40.0, top: 20.0),
                   children: <Widget>[
-                    ListView(
-                      shrinkWrap: true,
-                      padding:
-                          EdgeInsets.only(left: 40.0, right: 40.0, top: 20.0),
-                      children: <Widget>[
-                        SizedBox(height: 24.0),
-                        name,
-                        SizedBox(height: 12.0),
-                        email,
-                        SizedBox(height: 12.0),
-                        age,
-                        SizedBox(height: 12.0),
-                        password,
-                        SizedBox(height: 12.0),
-                        conpass,
-                        SizedBox(height: 24.0),
-                        loginButton,
-                        SizedBox(height: 8.0),
-                      ],
-                    ),
+                    name,
+                    SizedBox(height: 12.0),
+                    email,
+                    SizedBox(height: 12.0),
+                    age,
+                    SizedBox(height: 12.0),
+                    home,
+                    SizedBox(height: 12.0),
+                    password,
+                    SizedBox(height: 12.0),
+                    conpass,
+                    SizedBox(height: 24.0),
+                    loginButton,
+                    SizedBox(height: 8.0),
                   ],
                 ),
               ),

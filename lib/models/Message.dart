@@ -6,13 +6,18 @@ class Message implements Comparable<Message>{
   String message;
   String author;
   String chatId;
+  bool activeRequest;
+  String run;
   DateTime createdAt;
 
-  Message(String id, String message, String author, String chatId,
+  Message(String id, String message, String author, String chatId, bool activeRequest, String run,
       DateTime createdAt) {
     this.id = id;
+    this.message = message;
     this.author = author;
     this.chatId = chatId;
+    this.activeRequest = activeRequest;
+    this.run = run;
     this.createdAt = createdAt;
   }
 
@@ -21,7 +26,9 @@ class Message implements Comparable<Message>{
         message = json['message'],
         author = json['author'],
         chatId = json['chatId'],
-        createdAt = DateTime.parse(json['createdAt']);
+        activeRequest = json['activeRequest'],
+        run = json['run'],
+      createdAt = DateTime.parse(json['createdAt']);
 
   Map toJson() {
     return {
@@ -29,6 +36,8 @@ class Message implements Comparable<Message>{
       'message': message,
       'author': author,
       'chatId': chatId,
+      'activeRequest': activeRequest,
+      'run': run,
       'createdAt': createdAt
     };
   }

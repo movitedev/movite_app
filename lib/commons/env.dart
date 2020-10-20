@@ -1,7 +1,7 @@
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
 const testConfig = {
-  'url': 'http://192.168.42.253:8080'
+  'url': 'http://192.168.1.15:8080'
 };
 
 const productionConfig = {

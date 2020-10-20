@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/models/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,10 +21,16 @@ class MyPreferences {
     return prefs.getInt('age');
   }
 
+  static Future<Place> getHome() async {
+    final prefs = await SharedPreferences.getInstance();
+    return Place.fromJson(json.decode(prefs.getString('home')));
+  }
+
   static Future<String> getEmail() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('email');
   }
+
   static Future<String> getRole() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('role');
@@ -39,7 +48,7 @@ class MyPreferences {
 
   static Future<User> getUser() async {
     final prefs = await SharedPreferences.getInstance();
-    User me = new User(prefs.getString('id'), prefs.getString('name'), prefs.getString('email'), prefs.getInt('age'), prefs.getString('role'), DateTime.parse(prefs.getString('createdAt')));
+    User me = new User(prefs.getString('id'), prefs.getString('name'), prefs.getString('email'), prefs.getInt('age'), Place.fromJson(json.decode(prefs.getString('home'))), prefs.getString('role'), DateTime.parse(prefs.getString('createdAt')));
     return me;
   }
 
@@ -57,7 +66,11 @@ class MyPreferences {
   static Future setAge(int age) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('age', age);
+  }
 
+  static Future setHome(Place home) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('home', json.encode(home.toJson()));
   }
 
   static Future setEmail(String email) async {
@@ -84,6 +97,7 @@ class MyPreferences {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('name', user.name);
     prefs.setInt('age', user.age);
+    prefs.setString('home', json.encode(user.home.toJson()));
     prefs.setString('email', user.email);
     prefs.setString('role', user.role);
     prefs.setString('id', user.id);
@@ -95,6 +109,7 @@ class MyPreferences {
     prefs.setString('jwt', '');
     prefs.setString('name', '');
     prefs.setInt('age', 0);
+    prefs.setString('home', '');
     prefs.setString('email', '');
     prefs.setString('role', '');
     prefs.setString('id', '');
