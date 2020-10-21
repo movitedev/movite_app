@@ -197,15 +197,15 @@ class _SignUpPageState extends State<SignUpPage> {
                   _state = 0;
                 });
                 if (success) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                      settings: RouteSettings(
-                        arguments: {'showBar': true},
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                        settings: RouteSettings(
+                          arguments: {'showBar': true},
+                        ),
                       ),
-                    ),
-                  );
+                      (route) => false);
                   //Navigator.pushReplacementNamed(context, '/login',
                   //arguments: {'showBar': true});
                 }
