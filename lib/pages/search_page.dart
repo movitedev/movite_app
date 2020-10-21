@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:movite_app/commons/env.dart';
+import 'package:movite_app/commons/global_variables.dart' as global;
 import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/models/Chat.dart';
 import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/models/Run.dart';
 import 'package:movite_app/pages/offer_page.dart';
-import 'package:movite_app/commons/global_variables.dart' as global;
 
 import 'home_page.dart';
 
@@ -604,12 +604,15 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
       });
 
       if (chat == null) {
-        var result = await http.post("${environment['url']}/chat", headers: {
-          'Authorization': jwt
-        }, body: {
-          "partecipants": [widget.run.driver.id, widget.myId]
-        });
-        if (res.statusCode == 201) {
+        var result = await http.post("${environment['url']}/chats",
+            headers: {'Authorization': jwt, "Content-Type": "application/json"},
+            body: json.encode({
+              "partecipants": [
+                {"partecipant": widget.run.driver.id},
+                {"partecipant": widget.myId}
+              ]
+            }));
+        if (result.statusCode == 201) {
           chat = Chat.fromJson(json.decode(result.body));
         } else {
           showBar("Error");
