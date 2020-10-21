@@ -67,8 +67,6 @@ class _OfferPageState extends State<OfferPage> {
           'eventDate': global.dateTime.toUtc().toIso8601String()
         }));
 
-    print(global.dateTime.toUtc().toIso8601String());
-
     if (res.statusCode == 201) {
       Navigator.pop(context);
       Navigator.pop(context);

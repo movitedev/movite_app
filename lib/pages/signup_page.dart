@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
+import 'package:movite_app/components/date_selector.dart';
 import 'package:movite_app/components/place_autocomplete.dart';
 
 import 'login_page.dart';
@@ -22,7 +23,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
-  final ageController = TextEditingController();
+  final dateController = TextEditingController();
   final conpasController = TextEditingController();
   final homeController = TextEditingController();
 
@@ -32,7 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
     emailController.dispose();
     passwordController.dispose();
     nameController.dispose();
-    ageController.dispose();
+    dateController.dispose();
     conpasController.dispose();
     homeController.dispose();
 
@@ -53,14 +54,14 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<bool> attemptSignUp(
-      String email, String password, String name, String age) async {
+      String email, String password, String name) async {
     var res = await http.post("${environment['url']}/users",
         headers: {"Content-Type": "application/json"},
         body: json.encode({
           "email": email,
           "password": password,
           "name": name,
-          "age": age,
+          "birth": global.dateTime.toUtc().toIso8601String(),
           "home": global.fromPlace.toJson()
         }));
     if (res.statusCode == 201) {
@@ -122,16 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
       },
     );
 
-    final age = TextFormField(
-      controller: ageController,
-      keyboardType: TextInputType.number,
-      autofocus: false,
-      decoration: InputDecoration(
-        icon: Icon(Icons.face),
-        labelText: 'Age',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-      ),
-    );
+    final date = DateSelector("Birth Date", dateController);
 
     final password = TextFormField(
       controller: passwordController,
@@ -181,7 +173,7 @@ class _SignUpPageState extends State<SignUpPage> {
             String email = emailController.text;
             String password = passwordController.text;
             String name = nameController.text;
-            String age = ageController.text;
+            String date = dateController.text;
 
             if (_formKey.currentState.validate()) {
               if (passwordCheck()) {
@@ -192,7 +184,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     });
                   }
                 });
-                bool success = await attemptSignUp(email, password, name, age);
+                bool success = await attemptSignUp(email, password, name);
                 setState(() {
                   _state = 0;
                 });
@@ -244,7 +236,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     SizedBox(height: 12.0),
                     email,
                     SizedBox(height: 12.0),
-                    age,
+                    date,
                     SizedBox(height: 12.0),
                     home,
                     SizedBox(height: 12.0),
