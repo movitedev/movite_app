@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:movite_app/pages/landing_page.dart';
 
-void main() async {
-  await DotEnv().load('.env');
+void main() {
   runApp(new MyApp());
 }
 

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
 import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/models/Location.dart' as myLoc;
 import 'package:uuid/uuid.dart';
 
-String kGoogleApiKey = DotEnv().env['kGoogleApiKey'];
+final String kGoogleApiKey = environment['kGoogleApiKey'];
 
 class PlaceAutocomplete extends StatefulWidget {
   final String title;
