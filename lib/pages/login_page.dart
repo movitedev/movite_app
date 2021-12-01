@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   var _googleSignIn = GoogleSignIn();
 
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<User> attemptLogIn(String email, String password) async {
-    var res = await http.post("${environment['url']}/users/login",
+    var res = await http.post(Uri.parse("${environment['url']}/users/login"),
         body: {"email": email, "password": password});
     if (res.statusCode == 200) {
       UserAndToken userAndToken = UserAndToken.fromJson(json.decode(res.body));
@@ -59,12 +59,12 @@ class _LoginPageState extends State<LoginPage> {
         action: SnackBarAction(
           label: "Resend email",
           onPressed: () async {
-            await http.post("${environment['url']}/users/email",
+            await http.post(Uri.parse("${environment['url']}/users/email"),
                 body: {"email": email});
           },
         ),
       );
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+      ScaffoldMessenger.of(context).showSnackBar((snackBar));
       return null;
     } else if (res.statusCode == 409) {
       showBar("Account was found, but needs social login");
@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<User> attemptGoogleLogin(String token) async {
     var res = await http
-        .post("${environment['url']}/users/google", body: {"token": token});
+        .post(Uri.parse("${environment['url']}/users/google"), body: {"token": token});
     if (res.statusCode == 200) {
       UserAndToken userAndToken = UserAndToken.fromJson(json.decode(res.body));
       await MyPreferences.setAuthCode(userAndToken.token);
@@ -176,10 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 24.0),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                    child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           setState(() {
@@ -207,12 +204,10 @@ class _LoginPageState extends State<LoginPage> {
                           }
                         }
                       },
-                      padding: EdgeInsets.all(12),
-                      color: Colors.lightBlueAccent,
                       child: setButtonChild(),
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text(
                       'Create New Account',
                       style: TextStyle(

@@ -18,7 +18,6 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -46,7 +45,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -55,7 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<bool> attemptSignUp(
       String email, String password, String name) async {
-    var res = await http.post("${environment['url']}/users",
+    var res = await http.post(Uri.parse("${environment['url']}/users"),
         headers: {"Content-Type": "application/json"},
         body: json.encode({
           "email": email,
@@ -165,15 +164,11 @@ class _SignUpPageState extends State<SignUpPage> {
       tag: 'hero',
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 16.0),
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+        child: ElevatedButton(
           onPressed: () async {
             String email = emailController.text;
             String password = passwordController.text;
             String name = nameController.text;
-            String date = dateController.text;
 
             if (_formKey.currentState.validate()) {
               if (passwordCheck()) {
@@ -207,8 +202,6 @@ class _SignUpPageState extends State<SignUpPage> {
               }
             }
           },
-          padding: EdgeInsets.all(12),
-          color: Colors.lightBlueAccent,
           child: setButtonChild(),
         ),
       ),
@@ -219,7 +212,6 @@ class _SignUpPageState extends State<SignUpPage> {
         title: Text("Register"),
         backgroundColor: Colors.lightBlueAccent,
       ),
-      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: Center(
         child: Align(

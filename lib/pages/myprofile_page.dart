@@ -71,7 +71,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Widget runsTab() {
-    List<Widget> children = List<Widget>();
+    List<Widget> children = [];
 
     Widget driver =
         statField(Icons.directions_car, "Driver Runs", driverNumber);
@@ -106,7 +106,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     var myId = await MyPreferences.getId();
 
     var res = await http
-        .get("${environment['url']}/users/" + myId + "/stats", headers: {
+        .get(Uri.parse("${environment['url']}/users/" + myId + "/stats"), headers: {
       'Authorization': jwt,
     });
 
@@ -123,7 +123,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Widget informationField(String title, String value, IconData icon) {
-    List<Widget> children = new List<Widget>();
+    List<Widget> children = [];
 
     children.addAll([
       Icon(
@@ -231,15 +231,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
     final addFlat = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+      child: ElevatedButton(
         onPressed: () {
           //Navigator.of(context).pushNamed('');
         },
-        padding: EdgeInsets.all(12),
-        color: Colors.lightBlueAccent,
         child: Text('Modifica profilo', style: TextStyle(color: Colors.white)),
       ),
     );

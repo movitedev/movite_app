@@ -1,13 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:mapbox_search_flutter/mapbox_search_flutter.dart';
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
-import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/models/Location.dart' as myLoc;
-import 'package:uuid/uuid.dart';
+import 'package:movite_app/models/Place.dart';
 
-final String kGoogleApiKey = environment['kGoogleApiKey'];
+final String mapBoxApiKey = environment['mapBoxApiKey'];
+
+class PlaceSearchDialog extends StatefulWidget {
+  @override
+  _PlaceSearchDialogState createState() => _PlaceSearchDialogState();
+}
+
+class _PlaceSearchDialogState extends State<PlaceSearchDialog> {
+
+  bool _focused = false;
+
+  void afterBuild() {
+    if (!_focused) {
+      FocusScope.of(context).nextFocus();
+      _focused= true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => afterBuild());
+
+    return SimpleDialog(alignment: Alignment.topCenter, children: <Widget>[
+      MapBoxPlaceSearchWidget(
+        popOnSelect: false,
+        context: context,
+        apiKey: mapBoxApiKey,
+        searchHint: 'Search',
+        onSelected: (p) {
+          Place place = Place(p.placeName,
+              myLoc.Location("Point", p.geometry.coordinates));
+          Navigator.pop(context, place);
+        },
+      ),
+    ]);
+  }
+}
 
 class PlaceAutocomplete extends StatefulWidget {
   final String title;
@@ -21,32 +55,6 @@ class PlaceAutocomplete extends StatefulWidget {
 }
 
 class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
-  String token = new Uuid().v4();
-
-  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
-
-  Future<Place> displayPrediction(Prediction p) async {
-    Place place;
-    if (p != null) {
-      PlacesDetailsResponse detail =
-          await _places.getDetailsByPlaceId(p.placeId);
-
-      double lat = detail.result.geometry.location.lat;
-      double lng = detail.result.geometry.location.lng;
-      String name = detail.result.name;
-
-      List coordinates = [lng, lat];
-      myLoc.Location location = myLoc.Location("Point", coordinates);
-
-      place = Place (name, location);
-    }
-    return place;
-  }
-
-  void onError(PlacesAutocompleteResponse response) {
-    print(response.errorMessage);
-  }
-
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -59,22 +67,20 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
         contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
       ),
       onTap: () async {
-        Prediction p = await PlacesAutocomplete.show(
-          context: context,
-          apiKey: kGoogleApiKey,
-          onError: onError,
-          sessionToken: token,
-          mode: Mode.overlay,
-          language: "it",
-          components: [Component(Component.country, "it")],
-        );
+        Place p = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return PlaceSearchDialog();
+            });
 
-        Place place = await displayPrediction(p);
-        widget.controller.text = place.name;
-        if (widget.from) {
-          global.fromPlace = place;
-        } else {
-          global.toPlace = place;
+        if (p != null) {
+          widget.controller.text = p.name;
+
+          if (widget.from) {
+            global.fromPlace = p;
+          } else {
+            global.toPlace = p;
+          }
         }
       },
       validator: (value) {

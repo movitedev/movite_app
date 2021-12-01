@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:barcode_scan/barcode_scan.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:movite_app/commons/env.dart';
@@ -23,11 +22,10 @@ class _CodePageState extends State<CodePage> {
   int _state = 0;
   int _buttonState = 0;
   String code;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void createCode() async {
     var jwt = await MyPreferences.getAuthCode();
-    var res = await http.post("${environment['url']}/users/code", headers: {
+    var res = await http.post(Uri.parse("${environment['url']}/users/code"), headers: {
       'Authorization': jwt,
     });
     if (res.statusCode == 200) {
@@ -57,7 +55,7 @@ class _CodePageState extends State<CodePage> {
 
     var jwt = await MyPreferences.getAuthCode();
     var res = await http
-        .post("${environment['url']}/runs/" + id + "/validate", headers: {
+        .post(Uri.parse("${environment['url']}/runs/" + id + "/validate"), headers: {
       'Authorization': jwt,
     }, body: {
       "code": code
@@ -71,7 +69,7 @@ class _CodePageState extends State<CodePage> {
       value = "Code has expired";
     }
 
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -81,17 +79,17 @@ class _CodePageState extends State<CodePage> {
   Future<String> scanCode() async {
     String code;
     try {
-      String barcode = await BarcodeScanner.scan();
-      code = barcode;
+      var barcode = await BarcodeScanner.scan();
+      code = barcode.rawContent;
     } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) {
-        _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: new Text("Camera accessis denied"),
           behavior: SnackBarBehavior.floating,
           elevation: 8,
         ));
       } else {
-        _scaffoldKey.currentState.showSnackBar(new SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: new Text("Error"),
           behavior: SnackBarBehavior.floating,
           elevation: 8,
@@ -138,11 +136,11 @@ class _CodePageState extends State<CodePage> {
   }
 
   Future<List<Widget>> findRuns() async {
-    List<Widget> widgets = new List();
+    List<Widget> widgets = [];
 
     var jwt = await MyPreferences.getAuthCode();
     var res =
-        await http.get("${environment['url']}/users/me/runs/given", headers: {
+        await http.get(Uri.parse("${environment['url']}/users/me/runs/given"), headers: {
       'Authorization': jwt,
     });
 
@@ -154,7 +152,7 @@ class _CodePageState extends State<CodePage> {
       DateTime now = DateTime.now();
 
       runs.forEach((run) {
-        if ((run.eventDate.difference(now).inMinutes).abs() < 100) {
+        if ((run.eventDate.difference(now).inMinutes).abs() < 60 * 2) {
           widgets.add(SimpleDialogOption(
               onPressed: () async {
                 Navigator.pop(context);
@@ -198,7 +196,7 @@ class _CodePageState extends State<CodePage> {
                 children: runs);
           });
     } else {
-      _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: new Text("You have no runs to validate"),
         behavior: SnackBarBehavior.floating,
         elevation: 8,
@@ -209,7 +207,6 @@ class _CodePageState extends State<CodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
         backgroundColor: Colors.white,
         body: Center(
             child: Align(
@@ -237,18 +234,13 @@ class _CodePageState extends State<CodePage> {
                       textAlign: TextAlign.center),
                   SizedBox(height: 8.0),
                   Align(
-                      child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                      child: ElevatedButton(
                           onPressed: () async {
                             setState(() {
                               _buttonState = 1;
                             });
                             await _asyncSimpleDialog(context);
                           },
-                          padding: EdgeInsets.all(20),
-                          color: Colors.lightBlueAccent,
                           child: setButtonChild())),
                   SizedBox(height: 8.0),
                 ]))));

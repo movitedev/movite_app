@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/preferences.dart';
+import 'package:movite_app/components/run_info.dart';
 import 'package:movite_app/models/Chat.dart';
-import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/models/Run.dart';
 import 'package:movite_app/models/UsersReduced.dart';
 import 'package:movite_app/pages/profile_page.dart';
@@ -22,12 +22,11 @@ class MovitePage extends StatefulWidget {
 }
 
 class _MovitePageState extends State<MovitePage> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int _initialIndex = 0;
 
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -63,7 +62,6 @@ class _MovitePageState extends State<MovitePage> {
       length: 2,
       initialIndex: _initialIndex,
       child: new Scaffold(
-        key: _scaffoldKey,
         backgroundColor: Colors.white,
         appBar: new AppBar(
           backgroundColor: Colors.lightBlueAccent,
@@ -118,7 +116,7 @@ ListView runsList(data, bool driver) {
             data[index].from.name + " - " + data[index].to.name,
             DateFormat('dd-MM-yyyy – kk:mm').format(data[index].eventDate.toLocal()),
             data[index].id,
-            (DateTime.now()).difference(data[index].eventDate).inMinutes < 100,
+            (DateTime.now()).difference(data[index].eventDate).inMinutes < 60 * 2,
             driver,
             context);
       });
@@ -159,7 +157,7 @@ class _OfferedPageState extends State<OfferedPage> {
     var jwt = await MyPreferences.getAuthCode();
 
     var res =
-        await http.get("${environment['url']}/users/me/runs/given", headers: {
+        await http.get(Uri.parse("${environment['url']}/users/me/runs/given"), headers: {
       'Authorization': jwt,
     });
 
@@ -205,7 +203,7 @@ class _ReceivedPageState extends State<ReceivedPage> {
     var jwt = await MyPreferences.getAuthCode();
 
     var res = await http
-        .get("${environment['url']}/users/me/runs/received", headers: {
+        .get(Uri.parse("${environment['url']}/users/me/runs/received"), headers: {
       'Authorization': jwt,
     });
 
@@ -253,7 +251,6 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool currentStatus;
 
@@ -267,7 +264,7 @@ class _DetailsPageState extends State<DetailsPage> {
     var jwt = await MyPreferences.getAuthCode();
 
     var res = await http
-        .get("${environment['url']}/runs/" + id + "/details", headers: {
+        .get(Uri.parse("${environment['url']}/runs/" + id + "/details"), headers: {
       'Authorization': jwt,
     });
 
@@ -277,49 +274,6 @@ class _DetailsPageState extends State<DetailsPage> {
     } else {
       throw Exception('Failed to load jobs from API');
     }
-  }
-
-  Widget childElement(String title, String value, IconData icon) {
-    List<Widget> children = new List<Widget>();
-
-    children.addAll([
-      Icon(
-        icon,
-        color: Colors.blue[500],
-      ),
-      SizedBox(
-        width: 10,
-      ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.black54,
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          )
-        ],
-      )
-    ]);
-
-    return Container(
-      height: 65,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
-      ),
-    );
   }
 
   Widget menuChild(IconData iconData, String title) {
@@ -337,7 +291,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   Widget passengersWidget(
       Passenger passenger, bool validated, bool driverWidget) {
-    List<Widget> children = new List<Widget>();
+    List<Widget> children = [];
 
     Widget button = Container();
 
@@ -509,27 +463,8 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  Widget fromTo(Place from, Place to) {
-    Widget fromChild = childElement("From", from.name, Icons.location_on);
-    Widget toChild = childElement("To", to.name, Icons.location_on);
-
-    return Column(
-      children: <Widget>[
-        fromChild,
-        toChild,
-      ],
-    );
-  }
-
-  Widget eventDate(DateTime dateTime) {
-    return childElement(
-        "Event Date",
-        DateFormat('dd-MM-yyyy – kk:mm').format(dateTime.toLocal()),
-        Icons.calendar_today);
-  }
-
   Widget passengers(List<Passenger> passengers, List<Passenger> validated) {
-    List<Widget> children = new List<Widget>();
+    List<Widget> children = [];
 
     Set<String> validatedSet = new Set<String>();
 
@@ -581,7 +516,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   var jwt = await MyPreferences.getAuthCode();
 
                   var res = await http.patch(
-                      "${environment['url']}/runs/" + widget.id,
+                      Uri.parse("${environment['url']}/runs/" + widget.id),
                       headers: {
                         'Authorization': jwt,
                       },
@@ -626,7 +561,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
       //send messages
 
-      var res = await http.get("${environment['url']}/chats", headers: {
+      var res = await http.get(Uri.parse("${environment['url']}/chats"), headers: {
         'Authorization': jwt,
       });
 
@@ -668,18 +603,18 @@ class _DetailsPageState extends State<DetailsPage> {
           title: Text('Do you want to delete the run?'),
           content: Text('The passengers will be notified about the action.'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Delete the Run'),
               onPressed: () async {
                 //delete the run and pop back
 
-                List<Chat> chatsToAck = List<Chat>();
+                List<Chat> chatsToAck = [];
                 Set<String> idSet = Set<String>();
 
                 var jwt = await MyPreferences.getAuthCode();
@@ -687,7 +622,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 //send messages
 
                 var res =
-                    await http.get("${environment['url']}/chats", headers: {
+                    await http.get(Uri.parse("${environment['url']}/chats"), headers: {
                   'Authorization': jwt,
                 });
 
@@ -711,9 +646,9 @@ class _DetailsPageState extends State<DetailsPage> {
                   chatsToAck.forEach((element) {
                     //async
                     http.post(
-                        "${environment['url']}/chats/" +
+                        Uri.parse("${environment['url']}/chats/" +
                             element.id +
-                            '/messages',
+                            '/messages'),
                         headers: {
                           'Authorization': jwt,
                         },
@@ -735,7 +670,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 //delete
 
                 var response = await http
-                    .delete("${environment['url']}/runs/" + run.id, headers: {
+                    .delete(Uri.parse("${environment['url']}/runs/" + run.id), headers: {
                   'Authorization': jwt,
                 });
 
@@ -773,13 +708,13 @@ class _DetailsPageState extends State<DetailsPage> {
           title: Text('Do you want to leave the run?'),
           content: Text('The driver will be notified about the action.'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Leave the Run'),
               onPressed: () async {
                 //leave the run and pop back
@@ -791,7 +726,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 //send messages
 
                 var res =
-                    await http.get("${environment['url']}/chats", headers: {
+                    await http.get(Uri.parse("${environment['url']}/chats"), headers: {
                   'Authorization': jwt,
                 });
 
@@ -810,9 +745,9 @@ class _DetailsPageState extends State<DetailsPage> {
 
                   //async
                   http.post(
-                      "${environment['url']}/chats/" +
+                      Uri.parse("${environment['url']}/chats/" +
                           chatToAck.id +
-                          '/messages',
+                          '/messages'),
                       headers: {
                         'Authorization': jwt,
                       },
@@ -833,7 +768,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 //leave run
 
                 var response = await http.post(
-                    "${environment['url']}/runs/" + run.id + "/leave",
+                    Uri.parse("${environment['url']}/runs/" + run.id + "/leave"),
                     headers: {
                       'Authorization': jwt,
                     });
@@ -872,13 +807,13 @@ class _DetailsPageState extends State<DetailsPage> {
           title: Text('Do you want remove the passenger from the run?'),
           content: Text('The passenger will be notified about the action.'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Remove from Run'),
               onPressed: () async {
                 //remove from the run and pop back
@@ -890,7 +825,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 //send messages
 
                 var res =
-                    await http.get("${environment['url']}/chats", headers: {
+                    await http.get(Uri.parse("${environment['url']}/chats"), headers: {
                   'Authorization': jwt,
                 });
 
@@ -909,9 +844,9 @@ class _DetailsPageState extends State<DetailsPage> {
 
                   //async
                   http.post(
-                      "${environment['url']}/chats/" +
+                      Uri.parse("${environment['url']}/chats/" +
                           chatToAck.id +
-                          '/messages',
+                          '/messages'),
                       headers: {
                         'Authorization': jwt,
                       },
@@ -930,10 +865,10 @@ class _DetailsPageState extends State<DetailsPage> {
                 }
 
                 var response = await http.post(
-                    "${environment['url']}/runs/" +
+                    Uri.parse("${environment['url']}/runs/" +
                         run.id +
                         "/remove/" +
-                        passenger.id,
+                        passenger.id),
                     headers: {
                       'Authorization': jwt,
                     });
@@ -1027,7 +962,7 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -1041,11 +976,8 @@ class _DetailsPageState extends State<DetailsPage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           run = snapshot.data;
-
           currentStatus = run.active;
-
           return Scaffold(
-            key: _scaffoldKey,
             appBar: AppBar(
               title: Text("Details"),
               backgroundColor: Colors.lightBlueAccent,
@@ -1059,8 +991,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 padding: EdgeInsets.all(30.0),
                 children: <Widget>[
                   sectionTitle("Run information:"),
-                  fromTo(run.from, run.to),
-                  eventDate(run.eventDate),
+                  RunInfo(from: run.from, to: run.to, eventDate: run.eventDate),
                   SizedBox(
                     height: 20,
                   ),
@@ -1082,7 +1013,6 @@ class _DetailsPageState extends State<DetailsPage> {
           );
         } else if (snapshot.hasError) {
           return Scaffold(
-            key: _scaffoldKey,
             appBar: AppBar(
               title: Text("Details"),
               backgroundColor: Colors.lightBlueAccent,
@@ -1092,7 +1022,6 @@ class _DetailsPageState extends State<DetailsPage> {
           );
         }
         return Scaffold(
-            key: _scaffoldKey,
             appBar: AppBar(
               title: Text("Details"),
               backgroundColor: Colors.lightBlueAccent,

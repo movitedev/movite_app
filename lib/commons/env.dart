@@ -1,13 +1,13 @@
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
 const testConfig = {
-  'url': 'http://192.168.1.15:8080',
-  'kGoogleApiKey': String.fromEnvironment("kGoogleApiKey")
+  'url': 'http://192.168.1.11:8080',
+  'mapBoxApiKey': String.fromEnvironment("mapBoxApiKey")
 };
 
 const productionConfig = {
   'url': 'https://movite.herokuapp.com',
-  'kGoogleApiKey': String.fromEnvironment("kGoogleApiKey")
+  'mapBoxApiKey': String.fromEnvironment("mapBoxApiKey")
 };
 
 final environment = isProduction ? productionConfig : testConfig;

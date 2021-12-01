@@ -60,13 +60,13 @@ class _HomePageState extends State<HomePage> {
           title: Text('Do you want to logout?'),
           content: Text('After the operation you will need to login again.'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Logout'),
               onPressed: () async {
                 await MyPreferences.logout();
@@ -159,27 +159,27 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             backgroundColor: Colors.lightBlueAccent,
             icon: Icon(Icons.directions_car),
-            title: Text('Movite'),
+            label: 'Movite',
           ),
           BottomNavigationBarItem(
             backgroundColor: Colors.lightBlueAccent,
             icon: Icon(Icons.chat),
-            title: Text('Chats'),
+            label: 'Chats',
           ),
           BottomNavigationBarItem(
             backgroundColor: Colors.lightBlueAccent,
             icon: Icon(Icons.home),
-            title: Text('Home'),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             backgroundColor: Colors.lightBlueAccent,
             icon: Icon(Icons.event),
-            title: Text('Events'),
+            label: 'Events',
           ),
           BottomNavigationBarItem(
             backgroundColor: Colors.lightBlueAccent,
             icon: Icon(Icons.local_offer),
-            title: Text('QR Code'),
+            label: 'QR Code',
           ),
         ],
         currentIndex: _selectedIndex,

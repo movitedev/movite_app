@@ -1,17 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:location/location.dart' as gps;
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/preferences.dart';
 import 'package:movite_app/components/datetime_selector.dart';
 import 'package:movite_app/components/place_selector.dart';
-import 'package:movite_app/models/Location.dart' as myLoc;
-import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
 
 import 'home_page.dart';
@@ -27,7 +22,6 @@ class OfferPage extends StatefulWidget {
 
 class _OfferPageState extends State<OfferPage> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final fromController = TextEditingController();
   final toController = TextEditingController();
@@ -44,7 +38,7 @@ class _OfferPageState extends State<OfferPage> {
   }
 
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -59,7 +53,7 @@ class _OfferPageState extends State<OfferPage> {
 
     var jwt = await MyPreferences.getAuthCode();
 
-    var res = await http.post("${environment['url']}/runs",
+    var res = await http.post(Uri.parse("${environment['url']}/runs"),
         headers: {'Authorization': jwt, "Content-Type": "application/json"},
         body: json.encode({
           'from': global.fromPlace.toJson(),
@@ -106,7 +100,6 @@ class _OfferPageState extends State<OfferPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Offer"),
@@ -137,17 +130,12 @@ class _OfferPageState extends State<OfferPage> {
                 height: 15,
               ),
               Align(
-                  child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                  child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           offerRun();
                         }
                       },
-                      padding: EdgeInsets.all(20),
-                      color: Colors.lightBlueAccent,
                       child: setButtonChild())),
             ],
           ),

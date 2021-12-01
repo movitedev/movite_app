@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
 import 'package:movite_app/commons/preferences.dart';
+import 'package:movite_app/components/run_info.dart';
 import 'package:movite_app/models/Chat.dart';
 import 'package:movite_app/models/Place.dart';
 import 'package:movite_app/models/Run.dart';
@@ -24,7 +25,6 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  int _dataState = 0;
 
   String name = "";
   String email = "";
@@ -37,79 +37,8 @@ class _SearchPageState extends State<SearchPage> {
   int driverNumber = 0;
   int passengerNumber = 0;
 
-  Widget childElement(String title, String value, IconData icon) {
-    List<Widget> children = new List<Widget>();
-
-    children.addAll([
-      Icon(
-        icon,
-        color: Colors.blue[500],
-      ),
-      SizedBox(
-        width: 10,
-      ),
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.black54,
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          )
-        ],
-      )
-    ]);
-
-    return Container(
-      height: 65,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
-      ),
-    );
-  }
-
-  Widget fromTo(Place from, Place to) {
-    Widget fromChild = childElement("From", from.name, Icons.location_on);
-    Widget toChild = childElement("To", to.name, Icons.location_on);
-
-    return Column(
-      children: <Widget>[
-        fromChild,
-        toChild,
-      ],
-    );
-  }
-
-  Widget eventDate(DateTime dateTime) {
-    return childElement(
-        "Event Date",
-        DateFormat('dd-MM-yyyy – kk:mm').format(dateTime.toLocal()),
-        Icons.calendar_today);
-  }
-
-  Widget searchParams() {
-    return Column(
-      children: <Widget>[
-        fromTo(global.fromPlace, global.toPlace),
-        eventDate(global.dateTime),
-      ],
-    );
-  }
-
   Widget informationField(String title, String value, IconData icon) {
-    List<Widget> children = new List<Widget>();
+    List<Widget> children = [];
 
     children.addAll([
       Icon(
@@ -196,7 +125,7 @@ class _SearchPageState extends State<SearchPage> {
 
     myId = await MyPreferences.getId();
 
-    var res = await http.post("${environment['url']}/runs/search",
+    var res = await http.post(Uri.parse("${environment['url']}/runs/search"),
         headers: {'Authorization': jwt, "Content-Type": "application/json"},
         body: json.encode({
           'from': global.fromPlace.toJson(),
@@ -223,10 +152,7 @@ class _SearchPageState extends State<SearchPage> {
         Text("Select a run",
             style: TextStyle(color: Colors.black, fontSize: 20.0)),
         Text("OR", style: TextStyle(color: Colors.black45, fontSize: 16.0)),
-        RaisedButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        ElevatedButton(
             onPressed: () async {
               Navigator.push(
                 context,
@@ -235,8 +161,6 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               );
             },
-            padding: EdgeInsets.all(20),
-            color: Colors.lightBlueAccent,
             child: Text('Use your car', style: TextStyle(color: Colors.white)))
       ],
     );
@@ -275,7 +199,7 @@ class _SearchPageState extends State<SearchPage> {
         child: ListView(
           padding: EdgeInsets.all(30),
           children: <Widget>[
-            searchParams(),
+            RunInfo(from: global.fromPlace, to: global.toPlace, eventDate: global.dateTime),
             bar(),
             SizedBox(
               height: 15.0,
@@ -477,12 +401,11 @@ class OfferDetailsPage extends StatefulWidget {
 }
 
 class _OfferDetailsPageState extends State<OfferDetailsPage> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool currentStatus;
 
   Widget childElement(String title, String value, IconData icon) {
-    List<Widget> children = new List<Widget>();
+    List<Widget> children = [];
 
     children.addAll([
       Icon(
@@ -543,16 +466,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
         Icons.calendar_today);
   }
 
-  Widget driver(String driver) {
-    return childElement("Driver", driver, Icons.directions_car);
-  }
 
-  Widget createdAt(DateTime dateTime) {
-    return childElement(
-        "Created at",
-        DateFormat('dd-MM-yyyy – kk:mm').format(dateTime.toLocal()),
-        Icons.event_available);
-  }
 
   Widget sectionTitle(String title) {
     return Column(children: <Widget>[
@@ -570,7 +484,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   }
 
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -585,7 +499,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
     var jwt = await MyPreferences.getAuthCode();
     // create chat if not exists
 
-    var res = await http.get("${environment['url']}/chats", headers: {
+    var res = await http.get(Uri.parse("${environment['url']}/chats"), headers: {
       'Authorization': jwt,
     });
 
@@ -604,7 +518,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
       });
 
       if (chat == null) {
-        var result = await http.post("${environment['url']}/chats",
+        var result = await http.post(Uri.parse("${environment['url']}/chats"),
             headers: {'Authorization': jwt, "Content-Type": "application/json"},
             body: json.encode({
               "partecipants": [
@@ -625,7 +539,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
 
     if (chat != null) {
       var r = await http.post(
-          "${environment['url']}/chats/" + chat.id + "/messages",
+          Uri.parse("${environment['url']}/chats/" + chat.id + "/messages"),
           headers: {
             'Authorization': jwt,
           },
@@ -677,7 +591,6 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Details"),
         backgroundColor: Colors.lightBlueAccent,
@@ -688,24 +601,16 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
           padding: EdgeInsets.all(30.0),
           children: <Widget>[
             sectionTitle("Run information:"),
-            fromTo(widget.run.from, widget.run.to),
-            eventDate(widget.run.eventDate),
-            driver(widget.run.driver.name),
-            createdAt(widget.run.createdAt),
+            RunInfo(from: widget.run.from, to: widget.run.to, eventDate: widget.run.eventDate, driverName: widget.run.driver.name, createdAtDate: widget.run.createdAt,),
             SizedBox(
               height: 15,
             ),
             Align(
                 child: widget.myId != widget.run.driver.id
-                    ? RaisedButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                    ? ElevatedButton(
                         onPressed: () async {
                           requestRun();
                         },
-                        padding: EdgeInsets.all(20),
-                        color: Colors.lightBlueAccent,
                         child: setButtonChild())
                     : Text("You are the driver of this run.")),
           ],

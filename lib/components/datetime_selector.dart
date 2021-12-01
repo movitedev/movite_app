@@ -83,11 +83,11 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
         children: <Widget>[
           Expanded(
             flex: 5,
-            child: FlatButton(
+            child: TextButton(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(Icons.timer),
+                    Icon(Icons.timer, color: Colors.black87),
                     SizedBox(
                       width: 10,
                     ),
@@ -107,11 +107,11 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
           ),
           Expanded(
             flex: 5,
-            child: FlatButton(
+            child: TextButton(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(Icons.timer),
+                    Icon(Icons.timer, color: Colors.black87),
                     SizedBox(
                       width: 10,
                     ),

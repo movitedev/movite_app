@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:google_geocoding/google_geocoding.dart';
 import 'package:location/location.dart' as gps;
+import 'package:mapbox_search/mapbox_search.dart';
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
 import 'package:movite_app/commons/preferences.dart';
@@ -10,7 +8,7 @@ import 'package:movite_app/components/place_autocomplete.dart';
 import 'package:movite_app/models/Location.dart' as myLoc;
 import 'package:movite_app/models/Place.dart';
 
-final String kGoogleApiKey = environment['kGoogleApiKey'];
+final String mapBoxApiKey = environment['mapBoxApiKey'];
 
 class PlaceSelector extends StatefulWidget {
   final String title;
@@ -25,7 +23,10 @@ class PlaceSelector extends StatefulWidget {
 
 class _PlaceSelectorState extends State<PlaceSelector> {
 
-  var googleGeocoding = GoogleGeocoding(kGoogleApiKey);
+  var geoCodingService = ReverseGeoCoding(
+    apiKey: mapBoxApiKey,
+    limit: 1,
+  );
 
   gps.Location location = new gps.Location();
   bool _serviceEnabled;
@@ -40,11 +41,11 @@ class _PlaceSelectorState extends State<PlaceSelector> {
         children: <Widget>[
           Expanded(
             flex: 5,
-            child: FlatButton(
+            child: TextButton(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(Icons.home),
+                    Icon(Icons.home, color: Colors.black87),
                     SizedBox(
                       width: 10,
                     ),
@@ -70,11 +71,11 @@ class _PlaceSelectorState extends State<PlaceSelector> {
           ),
           Expanded(
             flex: 5,
-            child: FlatButton(
+            child: TextButton(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Icon(Icons.gps_fixed),
+                    Icon(Icons.gps_fixed, color: Colors.black87),
                     SizedBox(
                       width: 10,
                     ),
@@ -103,8 +104,8 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                 }
 
                 _locationData = await location.getLocation();
-                var result = await googleGeocoding.geocoding.getReverse(LatLon(_locationData.latitude,_locationData.longitude), resultType: ["locality"]);
-                String name = result.results.first.addressComponents.first.shortName;
+                var result = await geoCodingService.getAddress(Location(lat: _locationData.latitude, lng: _locationData.longitude));
+                String name = result.first.placeName;
 
                 Place place = new Place(
                     name,

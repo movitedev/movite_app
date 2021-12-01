@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:movite_app/components/datetime_selector.dart';
 import 'package:movite_app/components/place_selector.dart';
 import 'package:movite_app/pages/search_page.dart';
@@ -13,18 +12,13 @@ class RunPage extends StatefulWidget {
 
 class _RunPageState extends State<RunPage> {
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final fromController = TextEditingController();
   final toController = TextEditingController();
   final dateController = TextEditingController();
 
-  void onError(PlacesAutocompleteResponse response) {
-    print(response.errorMessage);
-  }
-
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -54,7 +48,6 @@ class _RunPageState extends State<RunPage> {
     }
 
     return new Scaffold(
-      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: Center(
         child: Form(
@@ -99,10 +92,7 @@ class _RunPageState extends State<RunPage> {
                 height: 5,
               ),
               Align(
-                  child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                  child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           Navigator.push(
@@ -113,8 +103,6 @@ class _RunPageState extends State<RunPage> {
                           );
                         }
                       },
-                      padding: EdgeInsets.all(20),
-                      color: Colors.lightBlueAccent,
                       child: Text('Search',
                           style: TextStyle(color: Colors.white)))),
             ],

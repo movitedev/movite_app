@@ -30,7 +30,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     chatsMap = new Map<String, Chat>();
 
-    chats = new List<Chat>();
+    chats = [];
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getChats();
@@ -57,7 +57,7 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {});
     });
 
-    var res = await http.get("${environment['url']}/chats", headers: {
+    var res = await http.get(Uri.parse("${environment['url']}/chats"), headers: {
       'Authorization': jwt,
     });
 
@@ -199,7 +199,6 @@ class ChatRoomPage extends StatefulWidget {
 }
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<Message> messages;
   double height, width;
@@ -211,7 +210,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   void initState() {
-    messages = new List<Message>();
+    messages = [];
     textController = TextEditingController();
     scrollController = ScrollController();
 
@@ -251,7 +250,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     var jwt = await MyPreferences.getAuthCode();
 
     var res = await http.get(
-        "${environment['url']}/chats/" + widget.chat.id + '/messages',
+        Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
         headers: {
           'Authorization': jwt,
         });
@@ -271,7 +270,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
 
     //set last view
-    http.post("${environment['url']}/chats/" + widget.chat.id + "/read",
+    http.post(Uri.parse("${environment['url']}/chats/" + widget.chat.id + "/read"),
         headers: {
           'Authorization': jwt,
         });
@@ -282,7 +281,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
     var jwt = await MyPreferences.getAuthCode();
 
-    http.post("${environment['url']}/chats/" + widget.chat.id + "/read",
+    http.post(Uri.parse("${environment['url']}/chats/" + widget.chat.id + "/read"),
         headers: {
           'Authorization': jwt,
         });
@@ -291,8 +290,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   Widget requestButtons(Message message) {
-    FlatButton accept = FlatButton(
-      child: Text("Accept"),
+    TextButton accept = TextButton(
+      child: Text("Accept", style: TextStyle(color: Colors.white)),
       onPressed: () async {
         var jwt = await MyPreferences.getAuthCode();
 
@@ -302,17 +301,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         Passenger passenger = widget.chat.partecipants[1 - myIndex].partecipant;
 
         var res = await http.post(
-            "${environment['url']}/runs/" +
+            Uri.parse("${environment['url']}/runs/" +
                 message.run +
                 "/add/" +
-                passenger.id,
+                passenger.id),
             headers: {
               'Authorization': jwt,
             });
 
         if (res.statusCode == 200) {
           await http.post(
-              "${environment['url']}/messages/" + message.id + "/removerequest",
+              Uri.parse("${environment['url']}/messages/" + message.id + "/removerequest"),
               headers: {
                 'Authorization': jwt,
               });
@@ -323,7 +322,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           var match = re.firstMatch(message.message);
 
           await http.post(
-              "${environment['url']}/chats/" + widget.chat.id + '/messages',
+              Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
               headers: {
                 'Authorization': jwt,
               },
@@ -335,13 +334,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         }
       },
     );
-    FlatButton deny = FlatButton(
-      child: Text("Deny"),
+    TextButton deny = TextButton(
+      child: Text("Deny", style: TextStyle(color: Colors.white)),
       onPressed: () async {
         var jwt = await MyPreferences.getAuthCode();
 
         await http.post(
-            "${environment['url']}/messages/" + message.id + "/removerequest",
+            Uri.parse("${environment['url']}/messages/" + message.id + "/removerequest"),
             headers: {
               'Authorization': jwt,
             });
@@ -352,7 +351,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         var match = re.firstMatch(message.message);
 
         await http.post(
-            "${environment['url']}/chats/" + widget.chat.id + '/messages',
+            Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
             headers: {
               'Authorization': jwt,
             },
@@ -454,7 +453,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           var jwt = await MyPreferences.getAuthCode();
 
           var res = await http.post(
-              "${environment['url']}/chats/" + widget.chat.id + '/messages',
+              Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
               headers: {
                 'Authorization': jwt,
               },
@@ -497,7 +496,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   void showBar(String value) {
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: new Text(value),
       behavior: SnackBarBehavior.floating,
       elevation: 8,
@@ -512,13 +511,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return WillPopScope(
       onWillPop: setOnClose,
       child: Scaffold(
-        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(chatTitle),
           backgroundColor: Colors.lightBlueAccent,
           actions: <Widget>[
-            FlatButton(
-              textColor: Colors.white,
+            TextButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -527,8 +524,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                   ),
                 );
               },
-              child: Text("View Profile"),
-              shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+              child: Text("View Profile", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

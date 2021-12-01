@@ -11,7 +11,7 @@ import 'package:movite_app/pages/login_page.dart';
 class LandingPage extends StatelessWidget {
   Future<bool> checkIfAuthenticated() async {
     var jwt = await MyPreferences.getAuthCode();
-    var res = await http.get("${environment['url']}/users/me", headers: {
+    var res = await http.get(Uri.parse("${environment['url']}/users/me"), headers: {
       'Authorization': jwt,
     });
     if (res.statusCode == 200) {

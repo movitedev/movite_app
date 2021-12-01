@@ -38,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
       var jwt = await MyPreferences.getAuthCode();
 
       var res =
-          await http.get("${environment['url']}/users/" + widget.id, headers: {
+          await http.get(Uri.parse("${environment['url']}/users/" + widget.id), headers: {
         'Authorization': jwt,
       });
 
@@ -83,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget runsTab() {
-    List<Widget> children = List<Widget>();
+    List<Widget> children = [];
 
     Widget driver =
         statField(Icons.directions_car, "Driver Runs", driverNumber);
@@ -117,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var jwt = await MyPreferences.getAuthCode();
 
     var res = await http
-        .get("${environment['url']}/users/" + widget.id + "/stats", headers: {
+        .get(Uri.parse("${environment['url']}/users/" + widget.id + "/stats"), headers: {
       'Authorization': jwt,
     });
 
@@ -134,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget informationField(String title, String value, IconData icon) {
-    List<Widget> children = new List<Widget>();
+    List<Widget> children = [];
 
     children.addAll([
       Icon(
