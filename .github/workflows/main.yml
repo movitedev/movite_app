@@ -29,13 +29,10 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: beta
-      - run: flutter config --enable-web
-      - run: flutter pub get
-      - run: flutter build apk --dart-define mapBoxApiKey=${{secrets.MAPBOXAPIKEY}}
-      - run: flutter build web --dart-define mapBoxApiKey=${{secrets.MAPBOXAPIKEY}}
+      - run: git config --global user.email "movitedev@gmail.com"
+      - run: git config --global user.name "movitedev"
       #- run: if cd flutter; then git pull && cd ..; else git clone https://github.com/flutter/flutter.git; fi && flutter/bin/flutter config --enable-web && flutter/bin/flutter pub get && flutter/bin/flutter build apk --release && flutter/bin/flutter build web --release
       - run: git clone https://github.com/movitedev/movitedev.github.io.git
       - run: cd movitedev.github.io && git remote set-url --push origin https://movitedev:${{secrets.GITHUB_TOKEN}}@github.com/movitedev.github.io
       - run: mkdir movitedev.github.io/download
-      - run: cp -r ./build/web/* ./movitedev.github.io/ && cp ./build/app/outputs/apk/release/app-release.apk ./movitedev.github.io/download/movite.apk
       - run: cd movitedev.github.io && git add . && git commit -am "Site push" && git push
