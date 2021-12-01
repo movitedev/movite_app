@@ -17,12 +17,14 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-18.04
     # Steps represent a sequence of tasks that will be executed as part of the job
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - run: git config --global user.email "movitedev@gmail.com"
       - run: git config --global user.name "movitedev"
       #- run: if cd flutter; then git pull && cd ..; else git clone https://github.com/flutter/flutter.git; fi && flutter/bin/flutter config --enable-web && flutter/bin/flutter pub get && flutter/bin/flutter build apk --release && flutter/bin/flutter build web --release
       - run: git clone https://github.com/movitedev/movitedev.github.io.git
-      - run: cd movitedev.github.io && git remote set-url --push origin https://movitedev:${{secrets.GITHUB_TOKEN}}@github.com/movitedev/movitedev.github.io.git
+      #- run: cd movitedev.github.io && git remote set-url --push origin https://movitedev:${{secrets.GITHUB_TOKEN}}@github.com/movitedev/movitedev.github.io.git
       - run: touch movitedev.github.io/a.txt
       - run: mkdir movitedev.github.io/download
       - run: cd movitedev.github.io && git add . && git commit -am "Site push" && git push
