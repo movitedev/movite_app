@@ -134,10 +134,10 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: Colors.transparent,
-                    radius: 48.0,
+                    radius: 64.0,
                     child: Image.asset('assets/logo.png'),
                   ),
-                  SizedBox(height: 48.0),
+                  SizedBox(height: 24.0),
                   TextFormField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
