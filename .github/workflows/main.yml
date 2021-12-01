@@ -35,11 +35,10 @@ jobs:
       - run: flutter build web --dart-define mapBoxApiKey=${{secrets.MAPBOXAPIKEY}}
       #- run: if cd flutter; then git pull && cd ..; else git clone https://github.com/flutter/flutter.git; fi && flutter/bin/flutter config --enable-web && flutter/bin/flutter pub get && flutter/bin/flutter build apk --release && flutter/bin/flutter build web --release
       - run: |
-          git config --global user.name 'movitedev'
-          git config --global user.email 'movitedev@gmail.com'
           git clone https://github.com/movitedev/movitedev.github.io.git
           cd movitedev.github.io
           git remote set-url --push origin https://movitedev:${{secrets.GITHUB_TOKEN}}@github.com/movitedev.github.io
+          mkdir -p /download
           cp -r ../build/web/* ./ && cp ../build/app/outputs/apk/release/app-release.apk ./download/movite.apk
           git add .
           git commit -am "Site push"
