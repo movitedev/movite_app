@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mapbox_search_flutter/mapbox_search_flutter.dart';
 import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
 import 'package:movite_app/models/Location.dart' as myLoc;
 import 'package:movite_app/models/Place.dart';
+import 'mapbox_search_widget.dart';
 
 final String mapBoxApiKey = environment['mapBoxApiKey'];
 

@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -22,7 +22,7 @@ dependencies:
   shared_preferences:
   http:
   google_sign_in: ^5.2.1
-  flutter_auth_buttons:
+  auth_buttons:
   qr_flutter:
   barcode_scan2:
   json_annotation:
@@ -31,7 +31,6 @@ dependencies:
   uuid:
   location:
   mapbox_search:
-  mapbox_search_flutter:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
