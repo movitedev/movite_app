@@ -33,6 +33,8 @@ jobs:
       - run: flutter pub get
       - run: flutter build apk --dart-define mapBoxApiKey=${{secrets.MAPBOXAPIKEY}}
       - run: flutter build web --dart-define mapBoxApiKey=${{secrets.MAPBOXAPIKEY}}
+      - run: git config --global user.email "movitedev@gmail.com"
+      - run: git config --global user.name "movitedev"
       - run: git clone https://github.com/movitedev/movitedev.github.io.git
       - run: cd movitedev.github.io && git remote set-url --push origin https://movitedev:${{secrets.PUSH_KEY}}@github.com/movitedev/movitedev.github.io.git
       - run: mkdir movitedev.github.io/download
