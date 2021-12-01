@@ -1,0 +1,43 @@
+# This is a basic workflow to help you get started with Actions
+
+name: deploy to site
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-18.04
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install flutter and fire deployment
+        uses: actions/setup-node@v1
+        with: 
+          node-version: 8
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: beta
+      - run: echo ${{secrets.KEY_STORE}} | base64 -d > android/key.jks
+      - run: flutter config --enable-web
+      - run: flutter pub get
+      - run: flutter build apk --dart-define mapBoxApiKey=${{secrets.MAPBOXAPIKEY}}
+      - run: flutter build web --dart-define mapBoxApiKey=${{secrets.MAPBOXAPIKEY}}
+      - run: git config --global user.email "movitedev@gmail.com"
+      - run: git config --global user.name "movitedev"
+      - run: git clone https://github.com/movitedev/movitedev.github.io.git
+      - run: cd movitedev.github.io && git remote set-url --push origin https://movitedev:${{secrets.PUSH_KEY}}@github.com/movitedev/movitedev.github.io.git
+      - run: mkdir movitedev.github.io/download
+      - run: cp -r ./build/web/* ./movitedev.github.io/ && cp ./build/app/outputs/apk/release/app-release.apk ./movitedev.github.io/download/movite.apk
+      - run: cd movitedev.github.io && git add . && git commit -am "Site push" && git push origin main
