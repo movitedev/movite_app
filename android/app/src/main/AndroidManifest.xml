@@ -8,7 +8,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="${applicationName}"
-        android:label="movite_app"
+        android:label="Movite"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
