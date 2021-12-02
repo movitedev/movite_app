@@ -251,7 +251,6 @@ class _LoginPageState extends State<LoginPage> {
                           );
                         }
                       },
-                      darkMode: true, // default: false
                     ),
                   ),
                   SizedBox(height: 8.0),
