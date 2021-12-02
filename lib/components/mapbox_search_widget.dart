@@ -74,7 +74,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
   @override
   void initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     _containerHeight = Tween<double>(
         begin: 73,
         end: widget.height ??
@@ -165,7 +165,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
               onChanged: (value) async {
                 _debounceTimer?.cancel();
                 _debounceTimer = Timer(
-                  Duration(milliseconds: 0),
+                  Duration(milliseconds: 250),
                       () async {
                     await _autocompletePlace(value);
                     if (mounted) {
@@ -265,12 +265,13 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
   void _selectPlace(MapBoxPlace prediction) async {
     /// Will be called when a user selects one of the Place options.
     // Sets TextField value to be the location selected
+    /*
     _textEditingController.value = TextEditingValue(
       text: prediction.placeName,
       selection: TextSelection.collapsed(offset: prediction.placeName.length),
     );
+     */
 
-    /*
     // Makes animation
     await _animationController.animateTo(0.5);
     setState(() {
@@ -278,7 +279,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
       // _selectedPlace = prediction;
     });
     _animationController.reverse();
-*/
+
     // Calls the `onSelected` callback
     widget.onSelected(prediction);
     if (widget.popOnSelect) Navigator.pop(context);
