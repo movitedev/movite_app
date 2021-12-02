@@ -8,6 +8,9 @@ import 'mapbox_search_widget.dart';
 final String mapBoxApiKey = environment['mapBoxApiKey'];
 
 class PlaceSearchDialog extends StatefulWidget {
+  final TextEditingController controller;
+
+  PlaceSearchDialog(this.controller);
   @override
   _PlaceSearchDialogState createState() => _PlaceSearchDialogState();
 }
@@ -29,14 +32,15 @@ class _PlaceSearchDialogState extends State<PlaceSearchDialog> {
 
     return SimpleDialog(alignment: Alignment.topCenter, children: <Widget>[
       MapBoxPlaceSearchWidget(
-        popOnSelect: false,
+        popOnSelect: true,
         context: context,
         apiKey: mapBoxApiKey,
         searchHint: 'Search',
-        onSelected: (p) {
+        fontSize: 20,
+        onSelected: (p) async {
           Place place = Place(p.placeName,
               myLoc.Location("Point", p.geometry.coordinates));
-          Navigator.pop(context, place);
+          widget.controller.text = place.name;
         },
       ),
     ]);
@@ -70,11 +74,10 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
         Place p = await showDialog(
             context: context,
             builder: (BuildContext context) {
-              return PlaceSearchDialog();
+              return PlaceSearchDialog(widget.controller);
             });
 
         if (p != null) {
-          widget.controller.text = p.name;
 
           if (widget.from) {
             global.fromPlace = p;

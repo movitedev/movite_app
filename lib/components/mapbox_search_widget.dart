@@ -47,7 +47,7 @@ class MapBoxPlaceSearchWidget extends StatefulWidget {
   final String searchHint;
 
   ///Font Size
-  final String fontSize;
+  final double fontSize;
 
   @override
   _MapBoxPlaceSearchWidgetState createState() =>
@@ -74,7 +74,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
   @override
   void initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _containerHeight = Tween<double>(
         begin: 73,
         end: widget.height ??
@@ -270,6 +270,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
       selection: TextSelection.collapsed(offset: prediction.placeName.length),
     );
 
+    /*
     // Makes animation
     await _animationController.animateTo(0.5);
     setState(() {
@@ -277,7 +278,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
       // _selectedPlace = prediction;
     });
     _animationController.reverse();
-
+*/
     // Calls the `onSelected` callback
     widget.onSelected(prediction);
     if (widget.popOnSelect) Navigator.pop(context);
