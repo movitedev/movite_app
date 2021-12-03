@@ -3,26 +3,28 @@ import 'package:movite_app/commons/env.dart';
 import 'package:movite_app/commons/global_variables.dart' as global;
 import 'package:movite_app/models/Location.dart' as myLoc;
 import 'package:movite_app/models/Place.dart';
+
 import 'mapbox_search_widget.dart';
 
 final String mapBoxApiKey = environment['mapBoxApiKey'];
 
 class PlaceSearchDialog extends StatefulWidget {
   final TextEditingController controller;
+  final bool from;
 
-  PlaceSearchDialog(this.controller);
+  PlaceSearchDialog(this.controller, this.from);
+
   @override
   _PlaceSearchDialogState createState() => _PlaceSearchDialogState();
 }
 
 class _PlaceSearchDialogState extends State<PlaceSearchDialog> {
-
   bool _focused = false;
 
   void afterBuild() {
     if (!_focused) {
       FocusScope.of(context).nextFocus();
-      _focused= true;
+      _focused = true;
     }
   }
 
@@ -38,9 +40,14 @@ class _PlaceSearchDialogState extends State<PlaceSearchDialog> {
         searchHint: 'Search',
         fontSize: 20,
         onSelected: (p) async {
-          Place place = Place(p.placeName,
-              myLoc.Location("Point", p.geometry.coordinates));
+          Place place = Place(
+              p.placeName, myLoc.Location("Point", p.geometry.coordinates));
           widget.controller.text = place.name;
+          if (widget.from) {
+            global.fromPlace = place;
+          } else {
+            global.toPlace = place;
+          }
         },
       ),
     ]);
@@ -71,20 +78,11 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
         contentPadding: EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
       ),
       onTap: () async {
-        Place p = await showDialog(
+        await showDialog(
             context: context,
             builder: (BuildContext context) {
-              return PlaceSearchDialog(widget.controller);
+              return PlaceSearchDialog(widget.controller, widget.from);
             });
-
-        if (p != null) {
-
-          if (widget.from) {
-            global.fromPlace = p;
-          } else {
-            global.toPlace = p;
-          }
-        }
       },
       validator: (value) {
         if (value.isEmpty) {
