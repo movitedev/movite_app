@@ -6,49 +6,49 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MyPreferences {
 
-  static Future<String> getAuthCode() async {
+  static Future<String?> getAuthCode() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('jwt');
   }
 
-  static Future<String> getName() async {
+  static Future<String?> getName() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('name');
   }
 
-  static Future<int> getAge() async {
+  static Future<int?> getAge() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('age');
   }
 
   static Future<Place> getHome() async {
     final prefs = await SharedPreferences.getInstance();
-    return Place.fromJson(json.decode(prefs.getString('home')));
+    return Place.fromJson(json.decode(prefs.getString('home')!));
   }
 
-  static Future<String> getEmail() async {
+  static Future<String?> getEmail() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('email');
   }
 
-  static Future<String> getRole() async {
+  static Future<String?> getRole() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('role');
   }
 
-  static Future<String> getId() async {
+  static Future<String?> getId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('id');
   }
 
   static Future<DateTime> getCreatedAt() async {
     final prefs = await SharedPreferences.getInstance();
-    return DateTime.parse(prefs.getString('createdAt'));
+    return DateTime.parse(prefs.getString('createdAt')!);
   }
 
   static Future<User> getUser() async {
     final prefs = await SharedPreferences.getInstance();
-    User me = new User(prefs.getString('id'), prefs.getString('name'), prefs.getString('email'), prefs.getInt('age'), Place.fromJson(json.decode(prefs.getString('home'))), prefs.getString('role'), DateTime.parse(prefs.getString('createdAt')));
+    User me = new User(prefs.getString('id'), prefs.getString('name'), prefs.getString('email'), prefs.getInt('age'), Place.fromJson(json.decode(prefs.getString('home')!)), prefs.getString('role'), DateTime.parse(prefs.getString('createdAt')!));
     return me;
   }
 
@@ -95,12 +95,12 @@ class MyPreferences {
 
   static Future saveUser(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('name', user.name);
-    prefs.setInt('age', user.age);
+    prefs.setString('name', user.name!);
+    prefs.setInt('age', user.age!);
     prefs.setString('home', json.encode(user.home.toJson()));
-    prefs.setString('email', user.email);
-    prefs.setString('role', user.role);
-    prefs.setString('id', user.id);
+    prefs.setString('email', user.email!);
+    prefs.setString('role', user.role!);
+    prefs.setString('id', user.id!);
     prefs.setString('createdAt', user.createdAt.toString());
   }
 

@@ -6,7 +6,7 @@ import 'package:movite_app/models/Place.dart';
 
 import 'mapbox_search_widget.dart';
 
-final String mapBoxApiKey = environment['mapBoxApiKey'];
+final String? mapBoxApiKey = environment['mapBoxApiKey'];
 
 class PlaceSearchDialog extends StatefulWidget {
   final TextEditingController controller;
@@ -41,8 +41,8 @@ class _PlaceSearchDialogState extends State<PlaceSearchDialog> {
         fontSize: 20,
         onSelected: (p) async {
           Place place = Place(
-              p.placeName, myLoc.Location("Point", p.geometry.coordinates));
-          widget.controller.text = place.name;
+              p.placeName, myLoc.Location("Point", p.geometry!.coordinates));
+          widget.controller.text = place.name!;
           if (widget.from) {
             global.fromPlace = place;
           } else {
@@ -85,7 +85,7 @@ class _PlaceAutocompleteState extends State<PlaceAutocomplete> {
             });
       },
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter a place';
         }
         return null;

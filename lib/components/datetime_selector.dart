@@ -17,7 +17,7 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
   TimeOfDay selectedTime = TimeOfDay.now();
 
   Future _selectDateTime(BuildContext context) async {
-    final DateTime datePicked = await showDatePicker(
+    final DateTime? datePicked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime.now(),
@@ -28,13 +28,13 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
       return;
     }
 
-    final TimeOfDay timePicked = await showTimePicker(
+    final TimeOfDay? timePicked = await showTimePicker(
       context: context,
       initialTime: selectedTime,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child,
+          child: child!,
         );
       },
     );
@@ -52,7 +52,7 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
           timePicked.minute)
           .toLocal();
       widget.controller.text =
-          DateFormat('dd-MM-yyyy – kk:mm').format(global.dateTime);
+          DateFormat('dd-MM-yyyy – kk:mm').format(global.dateTime!);
     });
   }
 
@@ -73,7 +73,7 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
           await _selectDateTime(context);
         },
         validator: (value) {
-          if (value.isEmpty) {
+          if (value!.isEmpty) {
             return 'Please enter a time';
           }
           return null;
@@ -101,7 +101,7 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
               onPressed: () {
                 global.dateTime = (DateTime.now()).add(Duration(minutes: 5)).toLocal();
                 widget.controller.text = DateFormat('dd-MM-yyyy – kk:mm')
-                    .format(global.dateTime);
+                    .format(global.dateTime!);
               },
             ),
           ),
@@ -125,7 +125,7 @@ class _DatetimeSelectorState extends State<DatetimeSelector> {
               onPressed: () {
                 global.dateTime = (DateTime.now()).add(Duration(hours: 2)).toLocal();
                 widget.controller.text = DateFormat('dd-MM-yyyy – kk:mm')
-                    .format(global.dateTime);
+                    .format(global.dateTime!);
               },
             ),
           ),

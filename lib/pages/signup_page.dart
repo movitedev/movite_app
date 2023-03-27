@@ -60,8 +60,8 @@ class _SignUpPageState extends State<SignUpPage> {
           "email": email,
           "password": password,
           "name": name,
-          "birth": global.dateTime.toUtc().toIso8601String(),
-          "home": global.fromPlace.toJson()
+          "birth": global.dateTime!.toUtc().toIso8601String(),
+          "home": global.fromPlace!.toJson()
         }));
     if (res.statusCode == 201) {
       return true;
@@ -98,7 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       ),
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter some text';
         }
         return null;
@@ -115,7 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       ),
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter some text';
         }
         return null;
@@ -134,7 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       ),
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter some text';
         }
         return null;
@@ -151,7 +151,7 @@ class _SignUpPageState extends State<SignUpPage> {
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       ),
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter some text';
         }
         return null;
@@ -170,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage> {
             String password = passwordController.text;
             String name = nameController.text;
 
-            if (_formKey.currentState.validate()) {
+            if (_formKey.currentState!.validate()) {
               if (passwordCheck()) {
                 setState(() {
                   if (_state == 0) {

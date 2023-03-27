@@ -35,7 +35,7 @@ class _MovitePageState extends State<MovitePage> {
 
   @override
   Widget build(BuildContext context) {
-    Map args = ModalRoute.of(context).settings.arguments;
+    Map? args = ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?;
 
     if (args != null) {
       if (args.containsKey('showBar1')) {
@@ -107,7 +107,7 @@ class _MovitePageState extends State<MovitePage> {
 
 ListView runsList(data, bool driver) {
   data.sort(
-      (RunNoPopulate a, RunNoPopulate b) => b.eventDate.compareTo(a.eventDate));
+      (RunNoPopulate a, RunNoPopulate b) => b.eventDate!.compareTo(a.eventDate!));
 
   return ListView.builder(
       itemCount: data.length,
@@ -122,7 +122,7 @@ ListView runsList(data, bool driver) {
       });
 }
 
-ListTile tile(String title, String subtitle, String id, bool active,
+ListTile tile(String title, String subtitle, String? id, bool active,
         bool driver, BuildContext context) =>
     ListTile(
       title: Text(title,
@@ -154,7 +154,7 @@ class OfferedPage extends StatefulWidget {
 
 class _OfferedPageState extends State<OfferedPage> {
   Future<List<RunNoPopulate>> getRuns() async {
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     var res =
         await http.get(Uri.parse("${environment['url']}/users/me/runs/given"), headers: {
@@ -178,7 +178,7 @@ class _OfferedPageState extends State<OfferedPage> {
       future: getRuns(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<RunNoPopulate> data = snapshot.data;
+          List<RunNoPopulate> data = snapshot.data!;
           return runsList(data, true);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -200,7 +200,7 @@ class ReceivedPage extends StatefulWidget {
 
 class _ReceivedPageState extends State<ReceivedPage> {
   Future<List<RunNoPopulate>> getRuns() async {
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     var res = await http
         .get(Uri.parse("${environment['url']}/users/me/runs/received"), headers: {
@@ -224,7 +224,7 @@ class _ReceivedPageState extends State<ReceivedPage> {
       future: getRuns(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<RunNoPopulate> data = snapshot.data;
+          List<RunNoPopulate> data = snapshot.data!;
           return runsList(data, false);
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -240,7 +240,7 @@ class _ReceivedPageState extends State<ReceivedPage> {
 class DetailsPage extends StatefulWidget {
   static String tag = 'details-page';
 
-  final String id;
+  final String? id;
   final bool active;
   final bool driver;
 
@@ -252,16 +252,16 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
 
-  bool currentStatus;
+  bool? currentStatus;
 
-  RunDetails run;
+  RunDetails? run;
 
-  String myId = "";
+  String? myId = "";
 
   Future<RunDetails> getRunDetails(String id) async {
     myId = await MyPreferences.getId();
 
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     var res = await http
         .get(Uri.parse("${environment['url']}/runs/" + id + "/details"), headers: {
@@ -299,7 +299,7 @@ class _DetailsPageState extends State<DetailsPage> {
       if (!widget.driver) {
         //passenger's driverWidget
         button = PopupMenuButton(
-          onSelected: (value) async {
+          onSelected: (dynamic value) async {
             await passengersHandler(value, passenger);
           },
           itemBuilder: (BuildContext context) {
@@ -332,7 +332,7 @@ class _DetailsPageState extends State<DetailsPage> {
         if (widget.active) {
           if (validated) {
             button = PopupMenuButton(
-              onSelected: (value) async {
+              onSelected: (dynamic value) async {
                 await passengersHandler(value, passenger);
               },
               itemBuilder: (BuildContext context) {
@@ -348,7 +348,7 @@ class _DetailsPageState extends State<DetailsPage> {
             );
           } else {
             button = PopupMenuButton(
-              onSelected: (value) async {
+              onSelected: (dynamic value) async {
                 await passengersHandler(value, passenger);
               },
               itemBuilder: (BuildContext context) {
@@ -369,7 +369,7 @@ class _DetailsPageState extends State<DetailsPage> {
           }
         } else {
           button = PopupMenuButton(
-            onSelected: (value) async {
+            onSelected: (dynamic value) async {
               await passengersHandler(value, passenger);
             },
             itemBuilder: (BuildContext context) {
@@ -396,7 +396,7 @@ class _DetailsPageState extends State<DetailsPage> {
           );
         } else {
           button = PopupMenuButton(
-            onSelected: (value) async {
+            onSelected: (dynamic value) async {
               await passengersHandler(value, passenger);
             },
             itemBuilder: (BuildContext context) {
@@ -434,7 +434,7 @@ class _DetailsPageState extends State<DetailsPage> {
             height: 5,
           ),
           Text(
-            passenger.name,
+            passenger.name!,
             style: TextStyle(
               fontSize: 16,
             ),
@@ -463,10 +463,10 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  Widget passengers(List<Passenger> passengers, List<Passenger> validated) {
+  Widget passengers(List<Passenger?> passengers, List<Passenger> validated) {
     List<Widget> children = [];
 
-    Set<String> validatedSet = new Set<String>();
+    Set<String?> validatedSet = new Set<String?>();
 
     validated.forEach((element) {
       validatedSet.add(element.id);
@@ -474,10 +474,10 @@ class _DetailsPageState extends State<DetailsPage> {
 
     //me at the last place of the list
 
-    Passenger me;
+    Passenger? me;
 
     passengers.forEach((element) {
-      if (element.id == myId) {
+      if (element!.id == myId) {
         me = element;
       }
     });
@@ -489,7 +489,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
     passengers.forEach((element) {
       children.add(
-          passengersWidget(element, validatedSet.contains(element.id), false));
+          passengersWidget(element!, validatedSet.contains(element.id), false));
     });
 
     return Column(
@@ -509,14 +509,14 @@ class _DetailsPageState extends State<DetailsPage> {
         ),
         Spacer(),
         Switch(
-          value: currentStatus,
+          value: currentStatus!,
           onChanged: widget.active
               ? (bool status) async {
                   String value = "Error";
-                  var jwt = await MyPreferences.getAuthCode();
+                  var jwt = (await MyPreferences.getAuthCode())!;
 
                   var res = await http.patch(
-                      Uri.parse("${environment['url']}/runs/" + widget.id),
+                      Uri.parse("${environment['url']}/runs/" + widget.id!),
                       headers: {
                         'Authorization': jwt,
                       },
@@ -557,7 +557,7 @@ class _DetailsPageState extends State<DetailsPage> {
         ),
       );
     } else if (value == 1) {
-      var jwt = await MyPreferences.getAuthCode();
+      var jwt = (await MyPreferences.getAuthCode())!;
 
       //send messages
 
@@ -570,7 +570,7 @@ class _DetailsPageState extends State<DetailsPage> {
             .map((i) => Chat.fromJson(i))
             .toList();
 
-        Chat chat;
+        Chat? chat;
 
         historyChats.forEach((element) {
           element.partecipants.forEach((part) {
@@ -615,9 +615,9 @@ class _DetailsPageState extends State<DetailsPage> {
                 //delete the run and pop back
 
                 List<Chat> chatsToAck = [];
-                Set<String> idSet = Set<String>();
+                Set<String?> idSet = Set<String?>();
 
-                var jwt = await MyPreferences.getAuthCode();
+                var jwt = (await MyPreferences.getAuthCode())!;
 
                 //send messages
 
@@ -631,8 +631,8 @@ class _DetailsPageState extends State<DetailsPage> {
                       .map((i) => Chat.fromJson(i))
                       .toList();
 
-                  run.passengers.forEach((element) {
-                    idSet.add(element.id);
+                  run!.passengers.forEach((element) {
+                    idSet.add(element!.id);
                   });
 
                   historyChats.forEach((element) {
@@ -647,19 +647,19 @@ class _DetailsPageState extends State<DetailsPage> {
                     //async
                     http.post(
                         Uri.parse("${environment['url']}/chats/" +
-                            element.id +
+                            element.id! +
                             '/messages'),
                         headers: {
                           'Authorization': jwt,
                         },
                         body: {
                           "message": "The run from " +
-                              run.from.name +
+                              run!.from!.name! +
                               " to " +
-                              run.to.name +
+                              run!.to!.name! +
                               " on date " +
                               DateFormat('dd-MM-yyyy – kk:mm')
-                                  .format(run.eventDate.toLocal()) +
+                                  .format(run!.eventDate!.toLocal()) +
                               " has been deleted."
                         });
                   });
@@ -670,7 +670,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 //delete
 
                 var response = await http
-                    .delete(Uri.parse("${environment['url']}/runs/" + run.id), headers: {
+                    .delete(Uri.parse("${environment['url']}/runs/" + run!.id!), headers: {
                   'Authorization': jwt,
                 });
 
@@ -719,9 +719,9 @@ class _DetailsPageState extends State<DetailsPage> {
               onPressed: () async {
                 //leave the run and pop back
 
-                Chat chatToAck;
+                late Chat chatToAck;
 
-                var jwt = await MyPreferences.getAuthCode();
+                var jwt = (await MyPreferences.getAuthCode())!;
 
                 //send messages
 
@@ -737,7 +737,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
                   historyChats.forEach((element) {
                     element.partecipants.forEach((part) {
-                      if (part.partecipant.id == run.driver.id) {
+                      if (part.partecipant.id == run!.driver.id) {
                         chatToAck = element;
                       }
                     });
@@ -746,19 +746,19 @@ class _DetailsPageState extends State<DetailsPage> {
                   //async
                   http.post(
                       Uri.parse("${environment['url']}/chats/" +
-                          chatToAck.id +
+                          chatToAck.id! +
                           '/messages'),
                       headers: {
                         'Authorization': jwt,
                       },
                       body: {
                         "message": "I left the run from " +
-                            run.from.name +
+                            run!.from!.name! +
                             " to " +
-                            run.to.name +
+                            run!.to!.name! +
                             " on date " +
                             DateFormat('dd-MM-yyyy – kk:mm')
-                                .format(run.eventDate.toLocal()) +
+                                .format(run!.eventDate!.toLocal()) +
                             "."
                       });
                 } else {
@@ -768,7 +768,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 //leave run
 
                 var response = await http.post(
-                    Uri.parse("${environment['url']}/runs/" + run.id + "/leave"),
+                    Uri.parse("${environment['url']}/runs/" + run!.id! + "/leave"),
                     headers: {
                       'Authorization': jwt,
                     });
@@ -818,9 +818,9 @@ class _DetailsPageState extends State<DetailsPage> {
               onPressed: () async {
                 //remove from the run and pop back
 
-                Chat chatToAck;
+                late Chat chatToAck;
 
-                var jwt = await MyPreferences.getAuthCode();
+                var jwt = (await MyPreferences.getAuthCode())!;
 
                 //send messages
 
@@ -845,19 +845,19 @@ class _DetailsPageState extends State<DetailsPage> {
                   //async
                   http.post(
                       Uri.parse("${environment['url']}/chats/" +
-                          chatToAck.id +
+                          chatToAck.id! +
                           '/messages'),
                       headers: {
                         'Authorization': jwt,
                       },
                       body: {
                         "message": "You have been removed from the run from " +
-                            run.from.name +
+                            run!.from!.name! +
                             " to " +
-                            run.to.name +
+                            run!.to!.name! +
                             " on date " +
                             DateFormat('dd-MM-yyyy – kk:mm')
-                                .format(run.eventDate.toLocal()) +
+                                .format(run!.eventDate!.toLocal()) +
                             "."
                       });
                 } else {
@@ -866,9 +866,9 @@ class _DetailsPageState extends State<DetailsPage> {
 
                 var response = await http.post(
                     Uri.parse("${environment['url']}/runs/" +
-                        run.id +
+                        run!.id! +
                         "/remove/" +
-                        passenger.id),
+                        passenger.id!),
                     headers: {
                       'Authorization': jwt,
                     });
@@ -878,7 +878,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
                   setState(() {});
 
-                  showBar("User " + passenger.name + " removed from the run");
+                  showBar("User " + passenger.name! + " removed from the run");
                 } else {
                   Navigator.pop(context);
 
@@ -897,11 +897,11 @@ class _DetailsPageState extends State<DetailsPage> {
 
     if (widget.active) {
       if (widget.driver) {
-        if (run.validated.length == 0) {
+        if (run!.validated.length == 0) {
           //active driver (not validated passengers)
 
           button = PopupMenuButton(
-            onSelected: (value) async {
+            onSelected: (dynamic value) async {
               await appBarHandler(value);
             },
             itemBuilder: (BuildContext context) {
@@ -917,7 +917,7 @@ class _DetailsPageState extends State<DetailsPage> {
       } else {
         bool meValidated = false;
 
-        run.validated.forEach((element) {
+        run!.validated.forEach((element) {
           if (element.id == myId) {
             meValidated = true;
           }
@@ -927,7 +927,7 @@ class _DetailsPageState extends State<DetailsPage> {
           //active passenger (not validated)
 
           button = PopupMenuButton(
-            onSelected: (value) async {
+            onSelected: (dynamic value) async {
               await appBarHandler(value);
             },
             itemBuilder: (BuildContext context) {
@@ -972,11 +972,11 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<RunDetails>(
-      future: getRunDetails(widget.id),
+      future: getRunDetails(widget.id!),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           run = snapshot.data;
-          currentStatus = run.active;
+          currentStatus = run!.active;
           return Scaffold(
             appBar: AppBar(
               title: Text("Details"),
@@ -991,12 +991,12 @@ class _DetailsPageState extends State<DetailsPage> {
                 padding: EdgeInsets.all(30.0),
                 children: <Widget>[
                   sectionTitle("Run information:"),
-                  RunInfo(from: run.from, to: run.to, eventDate: run.eventDate),
+                  RunInfo(from: run!.from, to: run!.to, eventDate: run!.eventDate),
                   SizedBox(
                     height: 20,
                   ),
                   sectionTitle("People in the car:"),
-                  passengersWidget(run.driver, false, true),
+                  passengersWidget(run!.driver, false, true),
                   SizedBox(
                     height: 10,
                   ),
@@ -1006,7 +1006,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           height: 20,
                         )
                       : Container(),
-                  passengers(run.passengers, run.validated),
+                  passengers(run!.passengers, run!.validated),
                 ],
               ),
             ),

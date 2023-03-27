@@ -43,13 +43,13 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<User> attemptLogIn(String email, String password) async {
+  Future<User?> attemptLogIn(String email, String password) async {
     var res = await http.post(Uri.parse("${environment['url']}/users/login"),
         body: {"email": email, "password": password});
     if (res.statusCode == 200) {
       UserAndToken userAndToken = UserAndToken.fromJson(json.decode(res.body));
-      await MyPreferences.setAuthCode(userAndToken.token);
-      await MyPreferences.saveUser(userAndToken.user);
+      await MyPreferences.setAuthCode(userAndToken.token!);
+      await MyPreferences.saveUser(userAndToken.user!);
       return userAndToken.user;
     } else if (res.statusCode == 401) {
       final snackBar = SnackBar(
@@ -75,13 +75,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<User> attemptGoogleLogin(String token) async {
+  Future<User?> attemptGoogleLogin(String? token) async {
     var res = await http
         .post(Uri.parse("${environment['url']}/users/google"), body: {"token": token});
     if (res.statusCode == 200) {
       UserAndToken userAndToken = UserAndToken.fromJson(json.decode(res.body));
-      await MyPreferences.setAuthCode(userAndToken.token);
-      await MyPreferences.saveUser(userAndToken.user);
+      await MyPreferences.setAuthCode(userAndToken.token!);
+      await MyPreferences.saveUser(userAndToken.user!);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget build(BuildContext context) {
-    Map args = ModalRoute.of(context).settings.arguments;
+    Map? args = ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?;
 
     if (args != null) {
       if (args.containsKey('showBar')) {
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                           EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
                     ),
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Please enter some text';
                       }
                       return null;
@@ -167,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                           EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0),
                     ),
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value!.isEmpty) {
                         return 'Please enter some text';
                       }
                       return null;
@@ -178,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                     padding: EdgeInsets.symmetric(vertical: 16.0),
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (_formKey.currentState.validate()) {
+                        if (_formKey.currentState!.validate()) {
                           setState(() {
                             if (_state == 0) {
                               setState(() {
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           String email = emailController.text;
                           String password = passwordController.text;
-                          User user = await attemptLogIn(email, password);
+                          User? user = await attemptLogIn(email, password);
 
                           setState(() {
                             _state = 0;
@@ -227,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: GoogleAuthButton(
                       onPressed: () async {
                         final GoogleSignInAccount googleUser =
-                            await _googleSignIn.signIn();
+                            (await _googleSignIn.signIn())!;
                         final googleKey = await googleUser.authentication;
 
                         setState(() {
@@ -238,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
                           }
                         });
 
-                        User user = await attemptGoogleLogin(googleKey.idToken);
+                        User? user = await attemptGoogleLogin(googleKey.idToken);
 
                         setState(() {
                           _state = 0;

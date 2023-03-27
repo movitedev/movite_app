@@ -4,10 +4,10 @@ import 'UsersReduced.dart';
 
 class Chat implements Comparable<Chat>{
   @JsonKey(name: '_id')
-  String id;
-  List<Partecipant> partecipants;
-  DateTime lastUpdate;
-  DateTime createdAt;
+  String? id;
+  late List<Partecipant> partecipants;
+  DateTime? lastUpdate;
+  DateTime? createdAt;
 
   Chat(String id, List<Partecipant> partecipants, DateTime lastUpdate,
       DateTime createdAt) {
@@ -41,11 +41,11 @@ class Chat implements Comparable<Chat>{
       return null;
     }
 
-    if (this.lastUpdate.isBefore(other.lastUpdate)) {
+    if (this.lastUpdate!.isBefore(other.lastUpdate!)) {
       return 1;
     }
 
-    if (this.lastUpdate.isAfter(other.lastUpdate)) {
+    if (this.lastUpdate!.isAfter(other.lastUpdate!)) {
       return -1;
     }
 

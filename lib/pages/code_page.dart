@@ -21,10 +21,10 @@ class CodePage extends StatefulWidget {
 class _CodePageState extends State<CodePage> {
   int _state = 0;
   int _buttonState = 0;
-  String code;
+  String? code;
 
   void createCode() async {
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
     var res = await http.post(Uri.parse("${environment['url']}/users/code"), headers: {
       'Authorization': jwt,
     });
@@ -53,7 +53,7 @@ class _CodePageState extends State<CodePage> {
   Future validateCode(id, code) async {
     String value = "Cannot validate code";
 
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
     var res = await http
         .post(Uri.parse("${environment['url']}/runs/" + id + "/validate"), headers: {
       'Authorization': jwt,
@@ -64,7 +64,7 @@ class _CodePageState extends State<CodePage> {
     if (res.statusCode == 200) {
       User user = User.fromJson(json.decode(res.body)['passenger']);
 
-      value = "Validated user " + user.name;
+      value = "Validated user " + user.name!;
     } else if (res.statusCode == 409) {
       value = "Code has expired";
     }
@@ -76,8 +76,8 @@ class _CodePageState extends State<CodePage> {
     ));
   }
 
-  Future<String> scanCode() async {
-    String code;
+  Future<String?> scanCode() async {
+    String? code;
     try {
       var barcode = await BarcodeScanner.scan();
       code = barcode.rawContent;
@@ -114,7 +114,7 @@ class _CodePageState extends State<CodePage> {
           height: 200,
           child: Center(
             child: QrImage(
-              data: code,
+              data: code!,
               version: QrVersions.auto,
               size: 200.0,
             ),
@@ -138,7 +138,7 @@ class _CodePageState extends State<CodePage> {
   Future<List<Widget>> findRuns() async {
     List<Widget> widgets = [];
 
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
     var res =
         await http.get(Uri.parse("${environment['url']}/users/me/runs/given"), headers: {
       'Authorization': jwt,
@@ -152,22 +152,22 @@ class _CodePageState extends State<CodePage> {
       DateTime now = DateTime.now();
 
       runs.forEach((run) {
-        if ((run.eventDate.difference(now).inMinutes).abs() < 60 * 2) {
+        if ((run.eventDate!.difference(now).inMinutes).abs() < 60 * 2) {
           widgets.add(SimpleDialogOption(
               onPressed: () async {
                 Navigator.pop(context);
-                String barcode = await scanCode();
+                String? barcode = await scanCode();
                 if (barcode != null) {
                   await validateCode(run.id, barcode);
                 }
               },
               child: Column(children: <Widget>[
-                Text(run.from.name + " - " + run.to.name,
+                Text(run.from.name! + " - " + run.to!.name!,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
                     )),
-                Text(DateFormat('dd-MM-yyyy – kk:mm').format(run.eventDate.toLocal())),
+                Text(DateFormat('dd-MM-yyyy – kk:mm').format(run.eventDate!.toLocal())),
               ])));
         }
       });

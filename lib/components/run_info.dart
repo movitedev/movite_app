@@ -4,7 +4,7 @@ import 'package:movite_app/models/Place.dart';
 
 class RunInfo extends StatelessWidget {
   const RunInfo({
-    Key key,
+    Key? key,
     this.from,
     this.to,
     this.eventDate,
@@ -12,11 +12,11 @@ class RunInfo extends StatelessWidget {
     this.createdAtDate,
   }) : super(key: key);
 
-  final Place from;
-  final Place to;
-  final DateTime eventDate;
-  final String driverName;
-  final DateTime createdAtDate;
+  final Place? from;
+  final Place? to;
+  final DateTime? eventDate;
+  final String? driverName;
+  final DateTime? createdAtDate;
 
   Widget childElement(String title, String value, IconData icon, double width) {
     List<Widget> children = [];
@@ -70,8 +70,8 @@ class RunInfo extends StatelessWidget {
 
   Widget fromTo(Place from, Place to, width) {
     Widget fromChild =
-        childElement("From", from.name, Icons.location_on, width);
-    Widget toChild = childElement("To", to.name, Icons.location_on, width);
+        childElement("From", from.name!, Icons.location_on, width);
+    Widget toChild = childElement("To", to.name!, Icons.location_on, width);
 
     return Column(
       children: <Widget>[
@@ -105,16 +105,16 @@ class RunInfo extends StatelessWidget {
     List<Widget> widgetList = [];
 
     if (from != null && to != null) {
-      widgetList.add(fromTo(from, to, width));
+      widgetList.add(fromTo(from!, to!, width));
     }
     if (eventDate != null) {
-      widgetList.add(runDate(eventDate, width));
+      widgetList.add(runDate(eventDate!, width));
     }
     if (driverName != null) {
-      widgetList.add(driver(driverName, width));
+      widgetList.add(driver(driverName!, width));
     }
     if (createdAtDate != null) {
-      widgetList.add(createdAt(createdAtDate, width));
+      widgetList.add(createdAt(createdAtDate!, width));
     }
 
     return Column(children: widgetList);

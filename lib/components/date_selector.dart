@@ -13,12 +13,12 @@ class DateSelector extends StatefulWidget {
 }
 
 class _DateSelectorState extends State<DateSelector> {
-  DateTime date;
+  DateTime? date;
 
   DateTime selectedDate = DateTime(2000);
 
   Future _selectDateTime(BuildContext context) async {
-    final DateTime datePicked = await showDatePicker(
+    final DateTime? datePicked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(1901),
@@ -32,7 +32,7 @@ class _DateSelectorState extends State<DateSelector> {
     setState(() {
       global.dateTime =
           DateTime(datePicked.year, datePicked.month, datePicked.day).toLocal();
-      widget.controller.text = DateFormat('dd-MM-yyyy').format(global.dateTime);
+      widget.controller.text = DateFormat('dd-MM-yyyy').format(global.dateTime!);
     });
   }
 
@@ -51,7 +51,7 @@ class _DateSelectorState extends State<DateSelector> {
         await _selectDateTime(context);
       },
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter a date';
         }
         return null;

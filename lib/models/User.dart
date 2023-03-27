@@ -4,15 +4,15 @@ import 'Place.dart';
 
 class User {
   @JsonKey(name: '_id')
-  String id;
-  String name;
-  String email;
-  int age;
-  Place home;
-  String role;
-  DateTime createdAt;
+  String? id;
+  String? name;
+  String? email;
+  int? age;
+  late Place home;
+  String? role;
+  DateTime? createdAt;
 
-  User(String id, String name, String email, int age, Place home, String role,
+  User(String? id, String? name, String? email, int? age, Place home, String? role,
       DateTime createdAt) {
     this.id = id;
     this.name = name;

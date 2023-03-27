@@ -19,16 +19,16 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  String myId = '';
+  String? myId = '';
   int _listState = 0;
 
-  Map<String, Chat> chatsMap;
+  late Map<String?, Chat> chatsMap;
 
-  List<Chat> chats;
+  late List<Chat?> chats;
 
   @override
   void initState() {
-    chatsMap = new Map<String, Chat>();
+    chatsMap = new Map<String?, Chat>();
 
     chats = [];
 
@@ -40,7 +40,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future getChats() async {
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     myId = await MyPreferences.getId();
 
@@ -52,7 +52,7 @@ class _ChatPageState extends State<ChatPage> {
       chatsMap[chat.id] = chat;
       chats.clear();
       chatsMap.forEach((k, v) => chats.add(chatsMap[k]));
-      chats.sort((Chat a, Chat b) => b.lastUpdate.compareTo(a.lastUpdate));
+      chats.sort((Chat? a, Chat? b) => b!.lastUpdate!.compareTo(a!.lastUpdate!));
 
       setState(() {});
     });
@@ -71,7 +71,7 @@ class _ChatPageState extends State<ChatPage> {
       chats.clear();
       chatsMap.forEach((k, v) => chats.add(v));
 
-      chats.sort((Chat a, Chat b) => b.lastUpdate.compareTo(a.lastUpdate));
+      chats.sort((Chat? a, Chat? b) => b!.lastUpdate!.compareTo(a!.lastUpdate!));
 
       setState(() {
         print("update");
@@ -90,25 +90,25 @@ class _ChatPageState extends State<ChatPage> {
         itemCount: chats.length,
         itemBuilder: (context, index) {
           int myIndex =
-              (chats[index].partecipants[0].partecipant.id) == myId ? 0 : 1;
+              (chats[index]!.partecipants[0].partecipant.id) == myId ? 0 : 1;
 
           return tile(
-              chats[index].partecipants[1 - myIndex].partecipant.name,
+              chats[index]!.partecipants[1 - myIndex].partecipant.name,
               DateFormat('dd-MM-yyyy – kk:mm')
-                  .format(chats[index].lastUpdate.toLocal()),
-              (chats[index].partecipants[myIndex].lastView)
-                  .isAfter(chats[index].lastUpdate),
+                  .format(chats[index]!.lastUpdate!.toLocal()),
+              chats[index]!.partecipants[myIndex].lastView!
+                  .isAfter(chats[index]!.lastUpdate!),
               chats[index],
               myId,
               context);
         });
   }
 
-  ListTile tile(String title, String subtitle, bool read, Chat chat,
-      String myId, BuildContext context) {
+  ListTile tile(String? title, String subtitle, bool read, Chat? chat,
+      String? myId, BuildContext context) {
     if (read) {
       return ListTile(
-        title: Text(title,
+        title: Text(title!,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 20,
@@ -131,7 +131,7 @@ class _ChatPageState extends State<ChatPage> {
       );
     } else {
       return ListTile(
-        title: Text(title,
+        title: Text(title!,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 20,
@@ -189,8 +189,8 @@ class _ChatPageState extends State<ChatPage> {
 }
 
 class ChatRoomPage extends StatefulWidget {
-  final Chat chat;
-  final String myId;
+  final Chat? chat;
+  final String? myId;
 
   const ChatRoomPage(this.chat, this.myId);
 
@@ -200,13 +200,13 @@ class ChatRoomPage extends StatefulWidget {
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
 
-  List<Message> messages;
-  double height, width;
-  TextEditingController textController;
-  ScrollController scrollController;
-  Widget chatChild;
-  String chatTitle;
-  String otherUserId = "";
+  late List<Message> messages;
+  double? height, width;
+  TextEditingController? textController;
+  ScrollController? scrollController;
+  Widget? chatChild;
+  String? chatTitle;
+  String? otherUserId = "";
 
   @override
   void initState() {
@@ -215,11 +215,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     scrollController = ScrollController();
 
     int myIndex =
-        (widget.chat.partecipants[0].partecipant.id) == widget.myId ? 0 : 1;
+        (widget.chat!.partecipants[0].partecipant.id) == widget.myId ? 0 : 1;
 
-    chatTitle = widget.chat.partecipants[1 - myIndex].partecipant.name;
+    chatTitle = widget.chat!.partecipants[1 - myIndex].partecipant.name;
 
-    otherUserId = widget.chat.partecipants[1 - myIndex].partecipant.id;
+    otherUserId = widget.chat!.partecipants[1 - myIndex].partecipant.id;
 
     /*
     if (messageSocketsMap.containsKey(widget.chat.id)) {
@@ -229,7 +229,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
      */
 
-    MySockets.messageSocket.emit('room', widget.chat.id);
+    MySockets.messageSocket.emit('room', widget.chat!.id);
 
     MySockets.messageSocket.on('message', (jsonData) {
       Message message = Message.fromJson(jsonData);
@@ -247,10 +247,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   Future chatHistory() async {
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     var res = await http.get(
-        Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
+        Uri.parse("${environment['url']}/chats/" + widget.chat!.id! + '/messages'),
         headers: {
           'Authorization': jwt,
         });
@@ -270,7 +270,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
 
     //set last view
-    http.post(Uri.parse("${environment['url']}/chats/" + widget.chat.id + "/read"),
+    http.post(Uri.parse("${environment['url']}/chats/" + widget.chat!.id! + "/read"),
         headers: {
           'Authorization': jwt,
         });
@@ -279,9 +279,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   Future<bool> setOnClose() async {
     MySockets.messageSocket.clearListeners();
 
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
-    http.post(Uri.parse("${environment['url']}/chats/" + widget.chat.id + "/read"),
+    http.post(Uri.parse("${environment['url']}/chats/" + widget.chat!.id! + "/read"),
         headers: {
           'Authorization': jwt,
         });
@@ -293,25 +293,25 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     TextButton accept = TextButton(
       child: Text("Accept", style: TextStyle(color: Colors.white)),
       onPressed: () async {
-        var jwt = await MyPreferences.getAuthCode();
+        var jwt = (await MyPreferences.getAuthCode())!;
 
         int myIndex =
-            (widget.chat.partecipants[0].partecipant.id) == widget.myId ? 0 : 1;
+            (widget.chat!.partecipants[0].partecipant.id) == widget.myId ? 0 : 1;
 
-        Passenger passenger = widget.chat.partecipants[1 - myIndex].partecipant;
+        Passenger passenger = widget.chat!.partecipants[1 - myIndex].partecipant;
 
         var res = await http.post(
             Uri.parse("${environment['url']}/runs/" +
-                message.run +
+                message.run! +
                 "/add/" +
-                passenger.id),
+                passenger.id!),
             headers: {
               'Authorization': jwt,
             });
 
         if (res.statusCode == 200) {
           await http.post(
-              Uri.parse("${environment['url']}/messages/" + message.id + "/removerequest"),
+              Uri.parse("${environment['url']}/messages/" + message.id! + "/removerequest"),
               headers: {
                 'Authorization': jwt,
               });
@@ -319,15 +319,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           message.activeRequest = false;
 
           var re = RegExp(r'(?<=passaggio per)(.*)');
-          var match = re.firstMatch(message.message);
+          var match = re.firstMatch(message.message!)!;
 
           await http.post(
-              Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
+              Uri.parse("${environment['url']}/chats/" + widget.chat!.id! + '/messages'),
               headers: {
                 'Authorization': jwt,
               },
               body: {
-                "message": "Richiesta per" + match.group(0) + " accettata"
+                "message": "Richiesta per" + match.group(0)! + " accettata"
               });
         } else {
           throw Exception('Failed to load jobs from API');
@@ -337,10 +337,10 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     TextButton deny = TextButton(
       child: Text("Deny", style: TextStyle(color: Colors.white)),
       onPressed: () async {
-        var jwt = await MyPreferences.getAuthCode();
+        var jwt = (await MyPreferences.getAuthCode())!;
 
         await http.post(
-            Uri.parse("${environment['url']}/messages/" + message.id + "/removerequest"),
+            Uri.parse("${environment['url']}/messages/" + message.id! + "/removerequest"),
             headers: {
               'Authorization': jwt,
             });
@@ -348,15 +348,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         message.activeRequest = false;
 
         var re = RegExp(r'(?<=passaggio per)(.*)');
-        var match = re.firstMatch(message.message);
+        var match = re.firstMatch(message.message!)!;
 
         await http.post(
-            Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
+            Uri.parse("${environment['url']}/chats/" + widget.chat!.id! + '/messages'),
             headers: {
               'Authorization': jwt,
             },
             body: {
-              "message": "Richiesta per" + match.group(0) + " rifiutata"
+              "message": "Richiesta per" + match.group(0)! + " rifiutata"
             });
 
       },
@@ -388,7 +388,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Text(
-                messages[index].message,
+                messages[index].message!,
                 style: TextStyle(color: Colors.white, fontSize: 15.0),
               ),
               SizedBox(
@@ -396,11 +396,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               ),
               Text(
                 DateFormat('dd-MM-yyyy – kk:mm')
-                    .format(messages[index].createdAt.toLocal()),
+                    .format(messages[index].createdAt!.toLocal()),
                 style: TextStyle(color: Colors.white70, fontSize: 12.0),
               ),
               messages[index].activeRequest != null &&
-                      messages[index].activeRequest &&
+                      messages[index].activeRequest! &&
                       left
                   ? requestButtons(messages[index])
                   : Container()
@@ -427,7 +427,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   Widget buildChatInput() {
     return Container(
-      width: width - 80 - 30,
+      width: width! - 80 - 30,
       padding: const EdgeInsets.all(2.0),
       margin: const EdgeInsets.only(left: 30.0),
       child: TextField(
@@ -445,15 +445,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       backgroundColor: Colors.lightBlueAccent,
       onPressed: () async {
         //Check if the textfield has text or not
-        if (textController.text.isNotEmpty) {
+        if (textController!.text.isNotEmpty) {
           //Send the message as JSON data to send_message event
-          String text = textController.text;
-          textController.text = '';
+          String text = textController!.text;
+          textController!.text = '';
 
-          var jwt = await MyPreferences.getAuthCode();
+          var jwt = (await MyPreferences.getAuthCode())!;
 
           var res = await http.post(
-              Uri.parse("${environment['url']}/chats/" + widget.chat.id + '/messages'),
+              Uri.parse("${environment['url']}/chats/" + widget.chat!.id! + '/messages'),
               headers: {
                 'Authorization': jwt,
               },
@@ -512,7 +512,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       onWillPop: setOnClose,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(chatTitle),
+          title: Text(chatTitle!),
           backgroundColor: Colors.lightBlueAccent,
           actions: <Widget>[
             TextButton(

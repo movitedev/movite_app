@@ -32,7 +32,7 @@ class _SearchPageState extends State<SearchPage> {
   String age = "";
   String createdAt = "";
 
-  String myId = "";
+  String? myId = "";
 
   int driverNumber = 0;
   int passengerNumber = 0;
@@ -82,7 +82,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   ListView runsList(data) {
-    data.sort((Run a, Run b) => a.eventDate.compareTo(b.eventDate));
+    data.sort((Run a, Run b) => a.eventDate!.compareTo(b.eventDate!));
 
     return ListView.builder(
         itemCount: data.length,
@@ -98,7 +98,7 @@ class _SearchPageState extends State<SearchPage> {
         });
   }
 
-  ListTile tile(String title, String subtitle, Run run, BuildContext context) =>
+  ListTile tile(String title, String subtitle, Run? run, BuildContext context) =>
       ListTile(
         title: Text(title,
             style: TextStyle(
@@ -121,16 +121,16 @@ class _SearchPageState extends State<SearchPage> {
       );
 
   Future<List<Run>> getRuns() async {
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     myId = await MyPreferences.getId();
 
     var res = await http.post(Uri.parse("${environment['url']}/runs/search"),
         headers: {'Authorization': jwt, "Content-Type": "application/json"},
         body: json.encode({
-          'from': global.fromPlace.toJson(),
-          'to': global.toPlace.toJson(),
-          'eventDate': global.dateTime.toUtc().toIso8601String(),
+          'from': global.fromPlace!.toJson(),
+          'to': global.toPlace!.toJson(),
+          'eventDate': global.dateTime!.toUtc().toIso8601String(),
           'spaceOffset': _spaceOffset,
           'timeOffset': _timeOffset
         }));
@@ -208,7 +208,7 @@ class _SearchPageState extends State<SearchPage> {
               future: getRuns(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  List<Run> data = snapshot.data;
+                  List<Run> data = snapshot.data!;
                   if (data.length > 0) {
                     return runsList(data);
                   } else {
@@ -391,8 +391,8 @@ class _MyDialogContentState extends State<MyDialogContent> {
 class OfferDetailsPage extends StatefulWidget {
   static String tag = 'details-page';
 
-  final Run run;
-  final String myId;
+  final Run? run;
+  final String? myId;
 
   const OfferDetailsPage(this.run, this.myId);
 
@@ -402,7 +402,7 @@ class OfferDetailsPage extends StatefulWidget {
 
 class _OfferDetailsPageState extends State<OfferDetailsPage> {
 
-  bool currentStatus;
+  bool? currentStatus;
 
   Widget childElement(String title, String value, IconData icon) {
     List<Widget> children = [];
@@ -448,8 +448,8 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   }
 
   Widget fromTo(Place from, Place to) {
-    Widget fromChild = childElement("From", from.name, Icons.location_on);
-    Widget toChild = childElement("To", to.name, Icons.location_on);
+    Widget fromChild = childElement("From", from.name!, Icons.location_on);
+    Widget toChild = childElement("To", to.name!, Icons.location_on);
 
     return Column(
       children: <Widget>[
@@ -496,14 +496,14 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
       _state = 1;
     });
 
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
     // create chat if not exists
 
     var res = await http.get(Uri.parse("${environment['url']}/chats"), headers: {
       'Authorization': jwt,
     });
 
-    Chat chat;
+    Chat? chat;
 
     if (res.statusCode == 200) {
       List<Chat> chats =
@@ -511,7 +511,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
 
       chats.forEach((element) {
         element.partecipants.forEach((part) {
-          if (part.partecipant.id == widget.run.driver.id) {
+          if (part.partecipant.id == widget.run!.driver!.id) {
             chat = element;
           }
         });
@@ -522,7 +522,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
             headers: {'Authorization': jwt, "Content-Type": "application/json"},
             body: json.encode({
               "partecipants": [
-                {"partecipant": widget.run.driver.id},
+                {"partecipant": widget.run!.driver!.id},
                 {"partecipant": widget.myId}
               ]
             }));
@@ -539,19 +539,19 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
 
     if (chat != null) {
       var r = await http.post(
-          Uri.parse("${environment['url']}/chats/" + chat.id + "/messages"),
+          Uri.parse("${environment['url']}/chats/" + chat!.id! + "/messages"),
           headers: {
             'Authorization': jwt,
           },
           body: {
             "message": "Chiedo un passaggio per la corsa da " +
-                widget.run.from.name +
+                widget.run!.from!.name! +
                 " a " +
-                widget.run.to.name +
+                widget.run!.to!.name! +
                 ", in data " +
-                DateFormat('dd-MM-yyyy – kk:mm').format(widget.run.eventDate),
+                DateFormat('dd-MM-yyyy – kk:mm').format(widget.run!.eventDate!),
             "activeRequest": 'true',
-            "run": widget.run.id
+            "run": widget.run!.id
           });
 
       if (r.statusCode == 201) {
@@ -601,12 +601,12 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
           padding: EdgeInsets.all(30.0),
           children: <Widget>[
             sectionTitle("Run information:"),
-            RunInfo(from: widget.run.from, to: widget.run.to, eventDate: widget.run.eventDate, driverName: widget.run.driver.name, createdAtDate: widget.run.createdAt,),
+            RunInfo(from: widget.run!.from, to: widget.run!.to, eventDate: widget.run!.eventDate, driverName: widget.run!.driver!.name, createdAtDate: widget.run!.createdAt,),
             SizedBox(
               height: 15,
             ),
             Align(
-                child: widget.myId != widget.run.driver.id
+                child: widget.myId != widget.run!.driver!.id
                     ? ElevatedButton(
                         onPressed: () async {
                           requestRun();

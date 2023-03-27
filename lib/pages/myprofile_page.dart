@@ -17,15 +17,15 @@ class MyProfilePage extends StatefulWidget {
 class _MyProfilePageState extends State<MyProfilePage> {
   int _dataState = 0;
 
-  String name = "";
-  String email = "";
-  String role = "";
+  String? name = "";
+  String? email = "";
+  String? role = "";
   String age = "";
-  String home = "";
+  String? home = "";
   String createdAt = "";
 
-  int driverNumber = 0;
-  int passengerNumber = 0;
+  int? driverNumber = 0;
+  int? passengerNumber = 0;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
       role = me.role;
       age = me.age.toString();
       home = me.home.name;
-      createdAt = DateFormat('dd-MM-yyyy').format(me.createdAt.toLocal());
+      createdAt = DateFormat('dd-MM-yyyy').format(me.createdAt!.toLocal());
 
       setState(() {});
 
@@ -47,7 +47,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     super.initState();
   }
 
-  Widget statField(IconData icon, String title, int number) {
+  Widget statField(IconData icon, String title, int? number) {
     return Column(
       children: <Widget>[
         Icon(
@@ -102,8 +102,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Future getStats() async {
-    var jwt = await MyPreferences.getAuthCode();
-    var myId = await MyPreferences.getId();
+    var jwt = (await MyPreferences.getAuthCode())!;
+    var myId = (await MyPreferences.getId())!;
 
     var res = await http
         .get(Uri.parse("${environment['url']}/users/" + myId + "/stats"), headers: {
@@ -168,10 +168,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Widget informationTab() {
     Widget ageField = informationField("Age", age, Icons.face);
-    Widget roleField = informationField("Role", role, Icons.verified_user);
+    Widget roleField = informationField("Role", role!, Icons.verified_user);
     Widget sinceField =
         informationField("Since", createdAt, Icons.calendar_today);
-    Widget placeField = informationField("Place", home, Icons.place);
+    Widget placeField = informationField("Place", home!, Icons.place);
 
     return Row(
       children: <Widget>[
@@ -212,7 +212,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
 
     final nameText = Text(
-      name,
+      name!,
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.black,
@@ -221,7 +221,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
 
     final emailText = Text(
-      email,
+      email!,
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.black,

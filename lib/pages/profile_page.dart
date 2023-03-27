@@ -10,8 +10,8 @@ import 'package:movite_app/models/User.dart';
 class ProfilePage extends StatefulWidget {
   static String tag = 'profile-page';
 
-  final String id;
-  final String title;
+  final String? id;
+  final String? title;
 
   const ProfilePage(this.id, this.title);
 
@@ -22,23 +22,23 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   int _dataState = 0;
 
-  String name = "";
-  String email = "";
-  String role = "";
+  String? name = "";
+  String? email = "";
+  String? role = "";
   String age = "";
-  String home = "";
+  String? home = "";
   String createdAt = "";
 
-  int driverNumber = 0;
-  int passengerNumber = 0;
+  int? driverNumber = 0;
+  int? passengerNumber = 0;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var jwt = await MyPreferences.getAuthCode();
+      var jwt = (await MyPreferences.getAuthCode())!;
 
       var res =
-          await http.get(Uri.parse("${environment['url']}/users/" + widget.id), headers: {
+          await http.get(Uri.parse("${environment['url']}/users/" + widget.id!), headers: {
         'Authorization': jwt,
       });
 
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
         role = user.role;
         home = user.home.name;
         age = user.age.toString();
-        createdAt = DateFormat('dd-MM-yyyy').format(user.createdAt.toLocal());
+        createdAt = DateFormat('dd-MM-yyyy').format(user.createdAt!.toLocal());
       }
 
       await getStats();
@@ -59,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
   }
 
-  Widget statField(IconData icon, String title, int number) {
+  Widget statField(IconData icon, String title, int? number) {
     return Column(
       children: <Widget>[
         Icon(
@@ -114,10 +114,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future getStats() async {
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     var res = await http
-        .get(Uri.parse("${environment['url']}/users/" + widget.id + "/stats"), headers: {
+        .get(Uri.parse("${environment['url']}/users/" + widget.id! + "/stats"), headers: {
       'Authorization': jwt,
     });
 
@@ -179,10 +179,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget informationTab() {
     Widget ageField = informationField("Age", age, Icons.face);
-    Widget roleField = informationField("Role", role, Icons.verified_user);
+    Widget roleField = informationField("Role", role!, Icons.verified_user);
     Widget sinceField =
         informationField("Since", createdAt, Icons.calendar_today);
-    Widget placeField = informationField("Place", home, Icons.place);
+    Widget placeField = informationField("Place", home!, Icons.place);
 
     return Row(
       children: <Widget>[
@@ -214,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     final nameText = Text(
-      name,
+      name!,
       textAlign: TextAlign.center,
       style: TextStyle(
         color: Colors.black,
@@ -224,7 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return new Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title!),
         backgroundColor: Colors.lightBlueAccent,
       ),
       backgroundColor: Colors.white,

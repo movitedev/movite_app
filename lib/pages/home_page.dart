@@ -11,7 +11,7 @@ import 'package:movite_app/pages/myprofile_page.dart';
 import 'package:movite_app/pages/run_page.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Map args = ModalRoute.of(context).settings.arguments;
+    Map? args = ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?;
 
     if (args != null) {
       if (args.containsKey('showBar1')) {
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
             },
           ),
           PopupMenuButton(
-            onSelected: (value) async {
+            onSelected: (dynamic value) async {
               await handler(value);
             },
             itemBuilder: (BuildContext context) {

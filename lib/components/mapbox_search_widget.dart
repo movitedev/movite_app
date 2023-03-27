@@ -5,7 +5,7 @@ import 'package:mapbox_search/mapbox_search.dart';
 
 class MapBoxPlaceSearchWidget extends StatefulWidget {
   MapBoxPlaceSearchWidget({
-    @required this.apiKey,
+    required this.apiKey,
     this.onSelected,
     // this.onSearch,
     this.fontSize,
@@ -21,33 +21,33 @@ class MapBoxPlaceSearchWidget extends StatefulWidget {
   final bool popOnSelect;
 
   ///To get the height of the page
-  final BuildContext context;
+  final BuildContext? context;
 
   /// Height of whole search widget
-  final double height;
+  final double? height;
 
   /// API Key of the MapBox.
-  final String apiKey;
+  final String? apiKey;
 
   /// The callback that is called when one Place is selected by the user.
-  final void Function(MapBoxPlace place) onSelected;
+  final void Function(MapBoxPlace place)? onSelected;
 
   /// The callback that is called when the user taps on the search icon.
   // final void Function(MapBoxPlaces place) onSearch;
 
   /// The point around which you wish to retrieve place information.
-  final Location location;
+  final Location? location;
 
   ///Limits the search to the given country
   ///
   /// Check the full list of [supported countries](https://docs.mapbox.com/api/search/) for the MapBox API
-  final String country;
+  final String? country;
 
   ///Search Hint Localization
   final String searchHint;
 
   ///Font Size
-  final double fontSize;
+  final double? fontSize;
 
   @override
   _MapBoxPlaceSearchWidgetState createState() =>
@@ -57,19 +57,19 @@ class MapBoxPlaceSearchWidget extends StatefulWidget {
 class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
     with SingleTickerProviderStateMixin {
   TextEditingController _textEditingController = TextEditingController();
-  AnimationController _animationController;
+  AnimationController? _animationController;
 
   // SearchContainer height.
-  Animation _containerHeight;
+  late Animation _containerHeight;
 
   // Place options opacity.
-  Animation _listOpacity;
+  late Animation _listOpacity;
 
-  List<MapBoxPlace> _placePredictions = [];
+  List<MapBoxPlace>? _placePredictions = [];
 
   // MapBoxPlace _selectedPlace;
 
-  Timer _debounceTimer;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -78,12 +78,12 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
     _containerHeight = Tween<double>(
         begin: 73,
         end: widget.height ??
-            MediaQuery.of(widget.context).size.height - 60 ??
+            MediaQuery.of(widget.context!).size.height - 60 ??
             300)
         .animate(
       CurvedAnimation(
         curve: Interval(0.0, 0.5, curve: Curves.easeInOut),
-        parent: _animationController,
+        parent: _animationController!,
       ),
     );
     _listOpacity = Tween<double>(
@@ -92,7 +92,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
     ).animate(
       CurvedAnimation(
         curve: Interval(0.5, 1.0, curve: Curves.easeInOut),
-        parent: _animationController,
+        parent: _animationController!,
       ),
     );
     super.initState();
@@ -115,9 +115,9 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
   );
 
   // Widgets
-  Widget _searchContainer({Widget child}) {
+  Widget _searchContainer({Widget? child}) {
     return AnimatedBuilder(
-        animation: _animationController,
+        animation: _animationController!,
         builder: (context, _) {
           return Container(
             height: _containerHeight.value,
@@ -138,7 +138,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
                       // addSemanticIndexes: true,
                       // itemExtent: 10,
                       children: <Widget>[
-                        for (var places in _placePredictions)
+                        for (var places in _placePredictions!)
                           _placeOption(places),
                       ],
                     ),
@@ -187,8 +187,8 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
   }
 
   Widget _placeOption(MapBoxPlace prediction) {
-    String place = prediction.text;
-    String fullName = prediction.placeName;
+    String place = prediction.text!;
+    String fullName = prediction.placeName!;
 
     return MaterialButton(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
@@ -241,7 +241,7 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
     ///
     if (input.length > 0) {
       var placesSearch = PlacesSearch(
-        apiKey: widget.apiKey,
+        apiKey: widget.apiKey!,
         country: widget.country,
       );
 
@@ -250,15 +250,15 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
         location: widget.location,
       );
 
-      await _animationController.animateTo(0.5);
+      await _animationController!.animateTo(0.5);
 
       setState(() => _placePredictions = predictions);
 
-      await _animationController.forward();
+      await _animationController!.forward();
     } else {
-      await _animationController.animateTo(0.5);
+      await _animationController!.animateTo(0.5);
       setState(() => _placePredictions = []);
-      await _animationController.reverse();
+      await _animationController!.reverse();
     }
   }
 
@@ -273,15 +273,15 @@ class _MapBoxPlaceSearchWidgetState extends State<MapBoxPlaceSearchWidget>
      */
 
     // Makes animation
-    await _animationController.animateTo(0.5);
+    await _animationController!.animateTo(0.5);
     setState(() {
       _placePredictions = [];
       // _selectedPlace = prediction;
     });
-    _animationController.reverse();
+    _animationController!.reverse();
 
     // Calls the `onSelected` callback
-    widget.onSelected(prediction);
+    widget.onSelected!(prediction);
     if (widget.popOnSelect) Navigator.pop(context);
   }
 }

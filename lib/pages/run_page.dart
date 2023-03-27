@@ -27,7 +27,7 @@ class _RunPageState extends State<RunPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map args = ModalRoute.of(context).settings.arguments;
+    Map? args = ModalRoute.of(context)!.settings.arguments as Map<dynamic, dynamic>?;
 
     if (args != null) {
       if (args.containsKey('showBar3')) {
@@ -94,7 +94,7 @@ class _RunPageState extends State<RunPage> {
               Align(
                   child: ElevatedButton(
                       onPressed: () async {
-                        if (_formKey.currentState.validate()) {
+                        if (_formKey.currentState!.validate()) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(

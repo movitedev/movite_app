@@ -9,12 +9,12 @@ class MySockets{
 
   Future init() async {
 
-    chatSocket = IO.io(environment['url'] + '/chats', <String, dynamic>{
+    chatSocket = IO.io(environment['url']! + '/chats', <String, dynamic>{
       'transports': ['websocket'],
       'query': {'token': await MyPreferences.getAuthCode()}
     });
 
-    messageSocket = IO.io(environment['url'] + '/messages', <String, dynamic>{
+    messageSocket = IO.io(environment['url']! + '/messages', <String, dynamic>{
       'transports': ['websocket'],
       'query': {'token': await MyPreferences.getAuthCode()}
     });

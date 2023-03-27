@@ -8,7 +8,7 @@ import 'package:movite_app/components/place_autocomplete.dart';
 import 'package:movite_app/models/Location.dart' as myLoc;
 import 'package:movite_app/models/Place.dart';
 
-final String mapBoxApiKey = environment['mapBoxApiKey'];
+final String? mapBoxApiKey = environment['mapBoxApiKey'];
 
 class PlaceSelector extends StatefulWidget {
   final String title;
@@ -24,14 +24,14 @@ class PlaceSelector extends StatefulWidget {
 class _PlaceSelectorState extends State<PlaceSelector> {
 
   var geoCodingService = ReverseGeoCoding(
-    apiKey: mapBoxApiKey,
+    apiKey: mapBoxApiKey!,
     limit: 1,
   );
 
   gps.Location location = new gps.Location();
-  bool _serviceEnabled;
-  gps.PermissionStatus _permissionGranted;
-  gps.LocationData _locationData;
+  late bool _serviceEnabled;
+  gps.PermissionStatus? _permissionGranted;
+  late gps.LocationData _locationData;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                   global.toPlace = place;
                 }
 
-                widget.controller.text = place.name;
+                widget.controller.text = place.name!;
               },
             ),
           ),
@@ -104,8 +104,8 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                 }
 
                 _locationData = await location.getLocation();
-                var result = await geoCodingService.getAddress(Location(lat: _locationData.latitude, lng: _locationData.longitude));
-                String name = result.first.placeName;
+                var result = (await geoCodingService.getAddress(Location(lat: _locationData.latitude!, lng: _locationData.longitude!)))!;
+                String? name = result.first.placeName;
 
                 Place place = new Place(
                     name,
@@ -118,7 +118,7 @@ class _PlaceSelectorState extends State<PlaceSelector> {
                   global.toPlace = place;
                 }
 
-                widget.controller.text = place.name;
+                widget.controller.text = place.name!;
 
               },
             ),

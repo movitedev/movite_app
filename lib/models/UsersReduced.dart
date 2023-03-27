@@ -2,8 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 class Passenger {
   @JsonKey(name: '_id')
-  String id;
-  String name;
+  String? id;
+  String? name;
 
 
   Passenger(String id, String name) {
@@ -24,8 +24,8 @@ class Passenger {
 }
 
 class Partecipant {
-  Passenger partecipant;
-  DateTime lastView;
+  late Passenger partecipant;
+  DateTime? lastView;
 
   Partecipant(Passenger partecipant, DateTime lastView) {
     this.partecipant = partecipant;

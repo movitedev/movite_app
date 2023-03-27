@@ -6,12 +6,12 @@ import 'UsersReduced.dart';
 
 class Run {
   @JsonKey(name: '_id')
-  String id;
-  Place from;
-  Place to;
-  User driver;
-  DateTime eventDate;
-  DateTime createdAt;
+  String? id;
+  Place? from;
+  Place? to;
+  User? driver;
+  DateTime? eventDate;
+  DateTime? createdAt;
 
   Run(String id, Place from, Place name, User driver, DateTime eventDate,
       DateTime createdAt) {
@@ -34,8 +34,8 @@ class Run {
   Map toJson() {
     return {
       '_id': id,
-      'from': from.toJson(),
-      'to': to.toJson(),
+      'from': from!.toJson(),
+      'to': to!.toJson(),
       'driver': driver,
       'eventDate': eventDate,
       'createdAt': createdAt
@@ -45,12 +45,12 @@ class Run {
 
 class RunNoPopulate {
   @JsonKey(name: '_id')
-  String id;
-  Place from;
-  Place to;
-  String driver;
-  DateTime eventDate;
-  DateTime createdAt;
+  String? id;
+  late Place from;
+  Place? to;
+  String? driver;
+  DateTime? eventDate;
+  DateTime? createdAt;
 
   RunNoPopulate(String id, Place from, Place name, String driver,
       DateTime eventDate, DateTime createdAt) {
@@ -74,7 +74,7 @@ class RunNoPopulate {
     return {
       '_id': id,
       'from': from.toJson(),
-      'to': to.toJson(),
+      'to': to!.toJson(),
       'driver': driver,
       'eventDate': eventDate,
       'createdAt': createdAt
@@ -84,15 +84,15 @@ class RunNoPopulate {
 
 class RunDetails {
   @JsonKey(name: '_id')
-  String id;
-  Place from;
-  Place to;
-  Passenger driver;
-  bool active;
-  List<Passenger> passengers;
-  List<Passenger> validated;
-  DateTime eventDate;
-  DateTime createdAt;
+  String? id;
+  Place? from;
+  Place? to;
+  late Passenger driver;
+  bool? active;
+  late List<Passenger?> passengers;
+  late List<Passenger> validated;
+  DateTime? eventDate;
+  DateTime? createdAt;
 
   RunDetails(
       String id,
@@ -100,7 +100,7 @@ class RunDetails {
       Place name,
       Passenger driver,
       bool active,
-      List<Passenger> passengers,
+      List<Passenger?> passengers,
       List<Passenger> validated,
       DateTime eventDate,
       DateTime createdAt) {
@@ -133,11 +133,11 @@ class RunDetails {
   Map toJson() {
     return {
       '_id': id,
-      'from': from.toJson(),
-      'to': to.toJson(),
+      'from': from!.toJson(),
+      'to': to!.toJson(),
       'driver': driver.toJson(),
       'active': active,
-      'passengers': passengers.map((tag) => tag.toJson()).toList(),
+      'passengers': passengers.map((tag) => tag!.toJson()).toList(),
       'validated': validated.map((tag) => tag.toJson()).toList(),
       'eventDate': eventDate,
       'createdAt': createdAt

@@ -30,9 +30,9 @@ class _OfferPageState extends State<OfferPage> {
   @override
   void initState() {
 
-    fromController.text = global.fromPlace.name;
-    toController.text = global.toPlace.name;
-    dateController.text = DateFormat('dd-MM-yyyy – kk:mm').format(global.dateTime);
+    fromController.text = global.fromPlace!.name!;
+    toController.text = global.toPlace!.name!;
+    dateController.text = DateFormat('dd-MM-yyyy – kk:mm').format(global.dateTime!);
 
     super.initState();
   }
@@ -51,14 +51,14 @@ class _OfferPageState extends State<OfferPage> {
       _state = 1;
     });
 
-    var jwt = await MyPreferences.getAuthCode();
+    var jwt = (await MyPreferences.getAuthCode())!;
 
     var res = await http.post(Uri.parse("${environment['url']}/runs"),
         headers: {'Authorization': jwt, "Content-Type": "application/json"},
         body: json.encode({
-          'from': global.fromPlace.toJson(),
-          'to': global.toPlace.toJson(),
-          'eventDate': global.dateTime.toUtc().toIso8601String()
+          'from': global.fromPlace!.toJson(),
+          'to': global.toPlace!.toJson(),
+          'eventDate': global.dateTime!.toUtc().toIso8601String()
         }));
 
     if (res.statusCode == 201) {
@@ -132,7 +132,7 @@ class _OfferPageState extends State<OfferPage> {
               Align(
                   child: ElevatedButton(
                       onPressed: () async {
-                        if (_formKey.currentState.validate()) {
+                        if (_formKey.currentState!.validate()) {
                           offerRun();
                         }
                       },

@@ -1,8 +1,8 @@
 class Location {
-  String type;
-  List coordinates;
+  String? type;
+  List? coordinates;
 
-  Location(String type, List coordinates) {
+  Location(String type, List? coordinates) {
     this.type = type;
     this.coordinates = coordinates;
   }

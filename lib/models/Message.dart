@@ -2,13 +2,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 class Message implements Comparable<Message>{
   @JsonKey(name: '_id')
-  String id;
-  String message;
-  String author;
-  String chatId;
-  bool activeRequest;
-  String run;
-  DateTime createdAt;
+  String? id;
+  String? message;
+  String? author;
+  String? chatId;
+  bool? activeRequest;
+  String? run;
+  DateTime? createdAt;
 
   Message(String id, String message, String author, String chatId, bool activeRequest, String run,
       DateTime createdAt) {
@@ -49,11 +49,11 @@ class Message implements Comparable<Message>{
       return null;
     }
 
-    if (this.createdAt.isBefore(other.createdAt)) {
+    if (this.createdAt!.isBefore(other.createdAt!)) {
       return 1;
     }
 
-    if (this.createdAt.isAfter(other.createdAt)) {
+    if (this.createdAt!.isAfter(other.createdAt!)) {
       return -1;
     }
 
