@@ -45,7 +45,7 @@ class Message implements Comparable<Message>{
   @override
   int compareTo(other) {
 
-    if (this.createdAt == null || other == null) {
+    if (this.createdAt == null) {
       return 0;
     }
 

@@ -37,7 +37,7 @@ class Chat implements Comparable<Chat>{
   @override
   int compareTo(other) {
 
-    if (this.lastUpdate == null || other == null) {
+    if (this.lastUpdate == null) {
       return 0;
     }
 
