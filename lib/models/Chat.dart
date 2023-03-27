@@ -38,7 +38,7 @@ class Chat implements Comparable<Chat>{
   int compareTo(other) {
 
     if (this.lastUpdate == null || other == null) {
-      return null;
+      return 0;
     }
 
     if (this.lastUpdate!.isBefore(other.lastUpdate!)) {
@@ -53,6 +53,6 @@ class Chat implements Comparable<Chat>{
       return 0;
     }
 
-    return null;
+    return 0;
   }
 }

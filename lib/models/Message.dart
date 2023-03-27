@@ -46,7 +46,7 @@ class Message implements Comparable<Message>{
   int compareTo(other) {
 
     if (this.createdAt == null || other == null) {
-      return null;
+      return 0;
     }
 
     if (this.createdAt!.isBefore(other.createdAt!)) {
@@ -61,7 +61,7 @@ class Message implements Comparable<Message>{
       return 0;
     }
 
-    return null;
+    return 0;
   }
 
 }

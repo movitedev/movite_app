@@ -530,7 +530,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
           chat = Chat.fromJson(json.decode(result.body));
         } else {
           showBar("Error");
-          return false;
+          return;
         }
       }
     }

@@ -44,9 +44,9 @@ class _ChatPageState extends State<ChatPage> {
 
     myId = await MyPreferences.getId();
 
-    MySockets.chatSocket.emit('room', myId);
+    MySockets.chatSocket!.emit('room', myId);
 
-    MySockets.chatSocket.on('chat', (jsonData) {
+    MySockets.chatSocket!.on('chat', (jsonData) {
       Chat chat = Chat.fromJson(jsonData);
 
       chatsMap[chat.id] = chat;
@@ -158,7 +158,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
-    MySockets.chatSocket.clearListeners();
+    MySockets.chatSocket!.clearListeners();
 
     super.dispose();
   }
@@ -229,9 +229,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
      */
 
-    MySockets.messageSocket.emit('room', widget.chat!.id);
+    MySockets.messageSocket!.emit('room', widget.chat!.id);
 
-    MySockets.messageSocket.on('message', (jsonData) {
+    MySockets.messageSocket!.on('message', (jsonData) {
       Message message = Message.fromJson(jsonData);
 
       setState(() {
@@ -277,7 +277,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   }
 
   Future<bool> setOnClose() async {
-    MySockets.messageSocket.clearListeners();
+    MySockets.messageSocket!.clearListeners();
 
     var jwt = (await MyPreferences.getAuthCode())!;
 

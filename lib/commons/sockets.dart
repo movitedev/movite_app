@@ -5,7 +5,7 @@ import 'env.dart';
 
 class MySockets{
 
-  static IO.Socket chatSocket, messageSocket;
+  static IO.Socket? chatSocket, messageSocket;
 
   Future init() async {
 
