@@ -6,7 +6,7 @@ const testConfig = {
 };
 
 const productionConfig = {
-  'url': 'https://movite.herokuapp.com',
+  'url': 'https://movite.onrender.com',
   'mapBoxApiKey': String.fromEnvironment("mapBoxApiKey")
 };
 
