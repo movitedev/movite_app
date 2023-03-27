@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:movite_app/commons/env.dart';
@@ -224,7 +224,8 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 48.0),
                   Align(
                     alignment: Alignment.center,
-                    child: GoogleAuthButton(
+                    child: SignInButton(
+                      Buttons.GoogleDark,
                       onPressed: () async {
                         final GoogleSignInAccount googleUser =
                             (await _googleSignIn.signIn())!;

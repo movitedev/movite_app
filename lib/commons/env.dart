@@ -1,7 +1,7 @@
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
 const testConfig = {
-  'url': 'http://192.168.1.11:8080',
+  'url': 'http://192.168.1.21:8080',
   'mapBoxApiKey': String.fromEnvironment("mapBoxApiKey")
 };
 
